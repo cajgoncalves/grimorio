@@ -1,0 +1,2 @@
+/* Gerado por gerar-indice.js — não editar à mão. */
+window.DIC_INDICE = {"69038520":"blb","f76a86f3":"blb","e2f57e48":"blb","1e0a2709":"blb","76c2e0b4":"blb","c65e804b":"blb","a82ea8f2":"blb","0534e20d":"blb","0d81ea20":"blb","a45065e9":"blb","6fbaa853":"blb","04fd8c1f":"blb","33f4fcd5":"blb","3df4eb80":"blb","d605d9d1":"blb","cb33edaf":"blb","fbf2653e":"blb","0369627e":"blb","3b10ab39":"blb","29423a9a":"blb","2e5b8973":"blb","99007c40":"blb","e07700e7":"blb","2cdc1d82":"blb","0a2fbdd3":"blb","5bf1dbb6":"blb","a12a66b5":"blb","9740ce6d":"blb","8e22bf51":"blb"};
