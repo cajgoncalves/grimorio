@@ -1,0 +1,651 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#E9DEC6">
+<title>Grimório — laboratório do scanner</title>
+<style>
+:root{
+  --bg:#E9DEC6; --bg-2:#F3ECDC; --ink:#2A2016; --ink-soft:#6A5B45;
+  --rule:#CDBE9F; --gold:#8A6614; --ok:#2F6B45; --warn:#9A6A12; --bad:#A23A26;
+}
+@media (prefers-color-scheme: dark){
+  :root{ --bg:#15100B; --bg-2:#201810; --ink:#EFE4CC; --ink-soft:#A08E75; --rule:#3C3123; --gold:#D6AE3E;
+         --ok:#5BB27E; --warn:#D6A23E; --bad:#E07A62; }
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:Georgia,"Times New Roman",serif;font-size:16px;line-height:1.45}
+.wrap{max-width:32rem;margin:0 auto;padding:max(.8rem,env(safe-area-inset-top)) 1rem 3rem}
+h1{font-size:1.25rem;margin:.2rem 0 .1rem}
+.sub{color:var(--ink-soft);font-size:.9rem;margin:0 0 .8rem}
+button{font:inherit;font-weight:600;min-height:44px;padding:.5rem .9rem;border-radius:3px;cursor:pointer;
+       border:1px solid var(--rule);background:var(--bg-2);color:var(--ink)}
+button.principal{background:var(--gold);border-color:var(--gold);color:var(--bg)}
+button:disabled{opacity:.5}
+.linha{display:flex;gap:.5rem;flex-wrap:wrap;margin:.6rem 0}
+.linha > *{flex:1 1 auto}
+
+/* ---- câmera com molde ---- */
+.visor{position:relative;width:100%;aspect-ratio:3/4;background:#000;border-radius:6px;overflow:hidden}
+.visor video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.molde{
+  position:absolute;left:50%;top:50%;width:72%;aspect-ratio:63/88;transform:translate(-50%,-50%);
+  border:3px solid rgba(255,255,255,.85);border-radius:4.5%/3.2%;
+  box-shadow:0 0 0 999px rgba(0,0,0,.38);pointer-events:none;transition:border-color .2s;
+}
+.molde.lendo{border-color:#E8C35A}
+.molde.achou{border-color:#6FD394}
+.molde i{position:absolute;left:5%;right:18%;border:1px dashed rgba(255,255,255,.55)}
+.molde i.nome{top:4%;height:7%}
+.molde i.rodape{top:89%;height:8%;right:58%}
+.dica-visor{position:absolute;left:0;right:0;bottom:.4rem;text-align:center;color:#fff;font-size:.85rem;
+            text-shadow:0 1px 3px #000;pointer-events:none}
+
+/* ---- leitura ao vivo ---- */
+.painel{margin:.7rem 0;padding:.6rem .7rem;border:1px solid var(--rule);border-radius:3px;background:var(--bg-2);font-size:.9rem}
+.painel b{font-weight:700}
+.painel .bruto{font-family:ui-monospace,Menlo,monospace;font-size:.8rem;color:var(--ink-soft);word-break:break-all}
+.recortes{display:flex;gap:.4rem;margin-top:.4rem;align-items:flex-start}
+.recortes canvas{max-width:48%;height:auto;border:1px solid var(--rule);background:#fff}
+.estado{font-weight:700}
+.estado.ok{color:var(--ok)} .estado.warn{color:var(--warn)} .estado.bad{color:var(--bad)}
+
+/* ---- resultado ---- */
+.achado{display:flex;gap:.7rem;align-items:flex-start;margin:.7rem 0;padding:.6rem;border:2px solid var(--ok);border-radius:4px;background:var(--bg-2)}
+.achado img{width:40%;border-radius:4.5%/3.2%}
+.achado h2{font-size:1.05rem;margin:0 0 .2rem}
+.achado p{margin:.1rem 0;font-size:.85rem;color:var(--ink-soft)}
+
+/* ---- registro ---- */
+.contagem{display:grid;grid-template-columns:repeat(4,1fr);gap:.3rem;text-align:center;margin:.5rem 0}
+.contagem div{border:1px solid var(--rule);border-radius:3px;padding:.3rem;background:var(--bg-2)}
+.contagem strong{display:block;font-size:1.3rem}
+.contagem span{font-size:.72rem;color:var(--ink-soft)}
+ol.registro{padding-left:1.2rem;font-size:.82rem;color:var(--ink-soft)}
+ol.registro li{margin:.2rem 0}
+textarea{width:100%;min-height:9rem;font-family:ui-monospace,Menlo,monospace;font-size:.75rem;
+         background:var(--bg-2);color:var(--ink);border:1px solid var(--rule);border-radius:3px}
+.aviso{font-size:.85rem;color:var(--ink-soft)}
+[hidden]{display:none !important}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Laboratório do scanner</h1>
+  <p class="sub">Página de teste, separada do app. Serve para medir quão bem o celular reconhece as cartas de vocês antes de colocar o scanner no Grimório.</p>
+
+  <div class="painel" id="carregando">Preparando o leitor de texto…</div>
+
+  <div class="linha">
+    <button class="principal" id="ligar" disabled>Ligar a câmera</button>
+    <button id="foto" disabled>Tirar foto</button>
+  </div>
+  <input type="file" id="arquivo" accept="image/*" capture="environment" hidden>
+
+  <div class="visor" id="visor" hidden>
+    <video id="video" playsinline muted autoplay></video>
+    <div class="molde" id="molde"><i class="nome"></i><i class="rodape"></i></div>
+    <div class="dica-visor" id="dica-visor">Encaixe a carta no molde, a um palmo do celular</div>
+  </div>
+
+  <div class="achado" id="achado" hidden>
+    <img id="achado-img" alt="">
+    <div>
+      <h2 id="achado-nome"></h2>
+      <p id="achado-info"></p>
+      <p id="achado-tempo"></p>
+      <div class="linha">
+        <button class="principal" id="acertou">Acertou</button>
+        <button id="errou">Errou</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="painel" id="leitura" hidden>
+    <div>Estado: <span class="estado" id="estado">—</span></div>
+    <div>Rodapé: <b id="r-rodape">—</b> <span class="bruto" id="r-rodape-bruto"></span></div>
+    <div>Nome: <b id="r-nome">—</b> <span class="bruto" id="r-nome-bruto"></span></div>
+    <div class="aviso" id="r-tempo"></div>
+    <div class="recortes"><canvas id="c-nome"></canvas><canvas id="c-rodape"></canvas></div>
+    <div class="linha">
+      <button id="nao-reconheceu">Não está reconhecendo</button>
+      <button id="salvar-quadro">Salvar este quadro</button>
+    </div>
+  </div>
+
+  <h2 style="font-size:1.05rem;margin-top:1.4rem">Resultado até agora</h2>
+  <div class="contagem">
+    <div><strong id="n-total">0</strong><span>tentativas</span></div>
+    <div><strong id="n-ok" style="color:var(--ok)">0</strong><span>acertou</span></div>
+    <div><strong id="n-erro" style="color:var(--bad)">0</strong><span>errou</span></div>
+    <div><strong id="n-nada" style="color:var(--warn)">0</strong><span>não reconheceu</span></div>
+  </div>
+  <ol class="registro" id="registro"></ol>
+  <div class="linha">
+    <button id="copiar">Copiar relatório</button>
+    <button id="zerar">Zerar</button>
+  </div>
+  <textarea id="relatorio" readonly hidden></textarea>
+  <p class="aviso">A imagem da câmera nunca sai do celular: só o texto lido (nome e código da carta) é enviado ao Scryfall, como na busca normal do Grimório.</p>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js"></script>
+<script>
+(function(){
+"use strict";
+
+/* ================= utilidades ================= */
+var $=function(id){ return document.getElementById(id); };
+function esperar(ms){ return new Promise(function(r){ setTimeout(r,ms); }); }
+function norm(s){ return String(s||"").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[^a-z0-9 ]/g," ").replace(/\s+/g," ").trim(); }
+function ler(k,d){ try{ var v=localStorage.getItem(k); return v?JSON.parse(v):d; }catch(e){ return d; } }
+function guardar(k,v){ try{ localStorage.setItem(k,JSON.stringify(v)); }catch(e){} }
+
+/* ================= Scryfall (mesma educação do app: 120 ms entre pedidos) ================= */
+var ultima=0, cacheApi={};
+async function api(caminho){
+  if(cacheApi[caminho]) return cacheApi[caminho];
+  var falta=120-(Date.now()-ultima); if(falta>0) await esperar(falta);
+  ultima=Date.now();
+  var r=await fetch("https://api.scryfall.com"+caminho);
+  var d=await r.json().catch(function(){ return null; });
+  if(!r.ok && !(r.status===404 && d && d.object==="error")) throw new Error("rede "+r.status);
+  cacheApi[caminho]=d;
+  return d;
+}
+
+/* ================= lista de coleções ================= */
+/* Serve para corrigir o código lido: "FON" vira "FDN". As coleções que
+   vocês jogam ganham prioridade no empate. */
+var PRIORIDADE=["FDN","J25","FDC"];
+var COLECOES=PRIORIDADE.slice();
+async function carregarColecoes(){
+  var salvo=ler("grimorio.lab.colecoes",null);
+  if(salvo && Date.now()-salvo.em < 7*864e5){ COLECOES=salvo.lista; return; }
+  try{
+    var d=await api("/sets");
+    var lista=d.data.filter(function(s){ return !s.digital; }).map(function(s){ return s.code.toUpperCase(); });
+    if(lista.length){ COLECOES=lista; guardar("grimorio.lab.colecoes",{em:Date.now(),lista:lista}); }
+  }catch(e){}
+}
+
+/* distância com as confusões típicas do OCR custando menos */
+var PARECIDAS={"OD":.3,"DO":.3,"0O":.2,"O0":.2,"1I":.3,"I1":.3,"5S":.3,"S5":.3,"8B":.3,"B8":.3,
+               "NH":.5,"HN":.5,"UV":.4,"VU":.4,"2Z":.4,"Z2":.4,"0D":.4,"D0":.4,"CG":.5,"GC":.5};
+function distancia(a,b){
+  var m=a.length,n=b.length,d=[],i,j;
+  for(i=0;i<=m;i++){ d[i]=[i]; }
+  for(j=0;j<=n;j++){ d[0][j]=j; }
+  for(i=1;i<=m;i++) for(j=1;j<=n;j++){
+    var c=a[i-1]===b[j-1]?0:(PARECIDAS[a[i-1]+b[j-1]]||1);
+    d[i][j]=Math.min(d[i-1][j]+1,d[i][j-1]+1,d[i-1][j-1]+c);
+  }
+  return d[m][n];
+}
+var IDIOMAS=["EN","PT","ES","FR","DE","IT","JA","KO","RU","ZH","PH"];
+function lerRodape(txt){
+  var t=String(txt).toUpperCase().replace(/[^A-Z0-9\s]/g," ");
+  /* número: prefere o de 4 dígitos (o rodapé moderno imprime 0227) */
+  var num=null, melhorTam=0;
+  (t.match(/\b[0-9OIS]{1,4}\b/g)||[]).forEach(function(tok){
+    var s=tok.replace(/O/g,"0").replace(/I/g,"1").replace(/S/g,"5");
+    if(!/^\d+$/.test(s) || /^0+$/.test(s)) return;
+    if(!/\d/.test(tok)) return;               // "SOS" sozinho não é número
+    if(s.length>melhorTam){ melhorTam=s.length; num=String(parseInt(s,10)); }
+  });
+  /* coleção: token de 3–6 caracteres, sem o idioma grudado */
+  var melhor=null;
+  (t.match(/\b[A-Z0-9]{3,6}\b/g)||[]).forEach(function(tok){
+    if(/^[0-9OIS]+$/.test(tok) && /\d/.test(tok)) return;
+    var cands=[tok.slice(0,4), tok.slice(0,3)];
+    IDIOMAS.forEach(function(L){ if(tok.length>L.length+2 && tok.slice(-L.length)===L) cands.push(tok.slice(0,-L.length)); });
+    cands.forEach(function(c){
+      COLECOES.forEach(function(s){
+        if(Math.abs(s.length-c.length)>1) return;
+        var dd=distancia(c,s);
+        if(dd>1) return;
+        var peso=dd-(PRIORIDADE.indexOf(s)>=0?.05:0);
+        if(!melhor || peso<melhor.peso) melhor={peso:peso,colecao:s};
+      });
+    });
+  });
+  return {colecao:melhor&&melhor.colecao, numero:num};
+}
+/* Índice local dos nomes das coleções que vocês jogam. Um nome lido pela
+   metade ("Sate Who lanalis at fate") ainda casa com o certo ("Alesha, Who
+   Laughs at Fate") porque a comparação é palavra a palavra, e o nome só é
+   aceito se ganhar do segundo colocado com folga — "Llanowar Elves" e
+   "Llanowar Tribe" não podem virar um empate decidido no chute. */
+var INDICE=[];
+async function carregarIndice(){
+  var salvo=ler("grimorio.lab.indice",null);
+  if(salvo && Date.now()-salvo.em < 7*864e5 && salvo.lista.length){ INDICE=prepararIndice(salvo.lista); return; }
+  try{
+    var q="("+PRIORIDADE.map(function(c){ return "set:"+c.toLowerCase(); }).join(" or ")+") game:paper";
+    var caminho="/cards/search?q="+encodeURIComponent(q)+"&unique=cards&order=name", lista=[], voltas=0;
+    while(caminho && voltas<20){
+      var d=await api(caminho);
+      (d.data||[]).forEach(function(c){ lista.push([c.name,c.oracle_id]); });
+      caminho=d.has_more&&d.next_page ? d.next_page.replace("https://api.scryfall.com","") : null;
+      voltas++;
+    }
+    if(lista.length){ guardar("grimorio.lab.indice",{em:Date.now(),lista:lista}); INDICE=prepararIndice(lista); }
+  }catch(e){}
+}
+function prepararIndice(lista){
+  return lista.map(function(par){
+    var nome=par[0].split(" // ")[0], n=norm(nome);
+    return { nome:par[0], oracle:par[1], n:n, palavras:n.split(" ").filter(function(w){ return w.length>=3; }) };
+  });
+}
+function lev(a,b){
+  var m=a.length,n=b.length; if(!m) return n; if(!n) return m;
+  var ant=new Array(n+1), cur=new Array(n+1), i, j;
+  for(j=0;j<=n;j++) ant[j]=j;
+  for(i=1;i<=m;i++){ cur[0]=i;
+    for(j=1;j<=n;j++) cur[j]=Math.min(ant[j]+1,cur[j-1]+1,ant[j-1]+(a[i-1]===b[j-1]?0:1));
+    var t=ant; ant=cur; cur=t; }
+  return ant[n];
+}
+function casarNomeLocal(lido){
+  var q=norm(lido); if(q.replace(/ /g,"").length<4 || !INDICE.length) return null;
+  var toks=q.split(" ").filter(function(w){ return w.length>=2; });
+  var melhor=null, segundo=null;
+  INDICE.forEach(function(e){
+    var inteiro=1-lev(q,e.n)/Math.max(q.length,e.n.length);
+    var achadas=0;
+    e.palavras.forEach(function(w){
+      var tol=w.length>=7?2:w.length>=4?1:0;
+      for(var k=0;k<toks.length;k++){ if(lev(toks[k],w)<=tol){ achadas++; break; } }
+    });
+    var porPalavra=e.palavras.length ? achadas/e.palavras.length : 0;
+    /* linha bem mais comprida que o nome é frase de regra ou de ambientação
+       que só menciona o nome ("The elves of the Llanowar forest…") */
+    var sobra=toks.length-(e.palavras.length+2);
+    if(sobra>0) porPalavra*=Math.max(0,1-sobra*.15);
+    if(e.palavras.length===1 && inteiro<.6) porPalavra*=.6;   // nome de uma palavra só pede leitura mais inteira
+    var nota=Math.max(inteiro, porPalavra*.95);
+    if(!melhor || nota>melhor.nota){ segundo=melhor; melhor={nota:nota,e:e}; }
+    else if(!segundo || nota>segundo.nota){ segundo={nota:nota,e:e}; }
+  });
+  if(!melhor || melhor.nota<.72) return null;
+  if(segundo && melhor.nota-segundo.nota<.08) return null;
+  return { name:melhor.e.nome, oracle_id:melhor.e.oracle, parcial:true, nota:+melhor.nota.toFixed(2) };
+}
+
+function rodapeEstrito(linhas){
+  var L=IDIOMAS.join("|");
+  for(var i=0;i<linhas.length;i++){
+    var t=linhas[i].toUpperCase().replace(/[^A-Z0-9\s]/g," ").replace(/\s+/g," ");
+    var m=t.match(new RegExp("\\b([A-Z0-9]{3,5})\\s*("+L+")\\b"));
+    if(!m) continue;
+    var cod=lerRodape(m[1]).colecao;
+    if(!cod) continue;
+    var perto=(linhas[i-1]||"")+" "+linhas[i];
+    var n=perto.toUpperCase().match(/\b[CURMLTS]?\s?([0-9OIS]{3,4})\b/g)||[];
+    for(var k=0;k<n.length;k++){
+      var dig=n[k].replace(/^[CURMLTS]\s?/,"").replace(/O/g,"0").replace(/I/g,"1").replace(/S/g,"5");
+      if(/^\d{3,4}$/.test(dig) && /\d/.test(n[k])) return {colecao:cod, numero:String(parseInt(dig,10))};
+    }
+    return {colecao:cod, numero:null};
+  }
+  return {colecao:null, numero:null};
+}
+
+function limparNome(txt){
+  var linhas=String(txt).split(/\n/).map(function(l){ return l.trim(); }).filter(Boolean);
+  var l=linhas.sort(function(a,b){ return b.replace(/[^A-Za-zÀ-ÿ]/g,"").length-a.replace(/[^A-Za-zÀ-ÿ]/g,"").length; })[0]||"";
+  l=l.replace(/^[^A-Za-zÀ-ÿ]+/,"").replace(/[^A-Za-zÀ-ÿ'!?]+$/,"");
+  l=l.replace(/[|_~^`"“”«»©®]/g,"").replace(/\s{2,}/g," ");
+  return l.replace(/[^A-Za-zÀ-ÿ]/g,"").length>=3 ? l : "";
+}
+
+/* ================= tratamento da imagem ================= */
+/* Recorta uma faixa da carta, amplia, estica o contraste e — se o texto
+   for claro sobre fundo escuro (rodapé preto) — inverte. `binarizar`
+   aplica o limiar de Otsu (bom no rodapé, ruim no nome). */
+function tratar(fonte, r, alturaAlvo, destino, binarizar){
+  var k=alturaAlvo/r.h, w=Math.max(1,Math.round(r.w*k)), h=alturaAlvo;
+  destino.width=w; destino.height=h;
+  var g=destino.getContext("2d",{willReadFrequently:true});
+  g.imageSmoothingEnabled=true; g.imageSmoothingQuality="high";
+  g.drawImage(fonte,r.x,r.y,r.w,r.h,0,0,w,h);
+  var img=g.getImageData(0,0,w,h), p=img.data, n=w*h, cinza=new Uint8ClampedArray(n), hist=new Array(256).fill(0), i, soma=0;
+  for(i=0;i<n;i++){ var v=(p[i*4]*299+p[i*4+1]*587+p[i*4+2]*114)/1000|0; cinza[i]=v; hist[v]++; soma+=v; }
+  var lo=0,hi=255,acc=0; for(i=0;i<256;i++){ acc+=hist[i]; if(acc>n*.02){ lo=i; break; } }
+  acc=0; for(i=255;i>=0;i--){ acc+=hist[i]; if(acc>n*.02){ hi=i; break; } }
+  var inverter=(soma/n)<128, faixa=Math.max(1,hi-lo);
+  for(i=0;i<n;i++){ var s=(cinza[i]-lo)*255/faixa; s=s<0?0:s>255?255:s; if(inverter) s=255-s; cinza[i]=s; }
+  if(binarizar){
+    var h2=new Array(256).fill(0); for(i=0;i<n;i++) h2[cinza[i]|0]++;
+    var tot=0; for(i=0;i<256;i++) tot+=i*h2[i];
+    var sB=0,wB=0,max=0,lim=128;
+    for(i=0;i<256;i++){ wB+=h2[i]; if(!wB) continue; var wF=n-wB; if(!wF) break; sB+=i*h2[i];
+      var mB=sB/wB, mF=(tot-sB)/wF, entre=wB*wF*(mB-mF)*(mB-mF); if(entre>max){ max=entre; lim=i; } }
+    for(i=0;i<n;i++) cinza[i]=cinza[i]>lim?255:0;
+  }
+  for(i=0;i<n;i++){ p[i*4]=p[i*4+1]=p[i*4+2]=cinza[i]; p[i*4+3]=255; }
+  g.putImageData(img,0,0);
+  return destino;
+}
+
+/* regiões dentro da carta (fração da largura/altura), medidas numa carta real */
+var FAIXA_NOME={x:.055,y:.038,w:.74,h:.075};
+var FAIXA_RODAPE={x:.03,y:.885,w:.40,h:.09};
+
+/* ================= o leitor (Tesseract) ================= */
+var leitor=null;
+async function prepararLeitor(){
+  leitor=await Tesseract.createWorker("eng",1,{});
+  $("carregando").hidden=true;
+  $("ligar").disabled=false; $("foto").disabled=false;
+}
+async function ocr(canvas, modo){
+  if(modo==="rodape"){
+    await leitor.setParameters({tessedit_pageseg_mode:"6",tessedit_char_whitelist:"ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 "});
+  }else if(modo==="nome"){
+    await leitor.setParameters({tessedit_pageseg_mode:"7",tessedit_char_whitelist:""});
+  }else{
+    await leitor.setParameters({tessedit_pageseg_mode:"11",tessedit_char_whitelist:""});
+  }
+  var r=await leitor.recognize(canvas);
+  return r.data;
+}
+
+/* ================= identificar a partir das duas leituras ================= */
+async function porRodape(col,num){
+  if(!col||!num) return null;
+  try{ var c=await api("/cards/"+col.toLowerCase()+"/"+num); return c&&c.object==="card"?c:null; }catch(e){ return null; }
+}
+async function porNome(nome){
+  if(!nome) return null;
+  var local=casarNomeLocal(nome);
+  if(local) return local;
+  /* fora das coleções de vocês: o corretor do Scryfall, só com leitura razoável */
+  if(nome.replace(/[^A-Za-zÀ-ÿ]/g,"").length<5) return null;
+  try{ var c=await api("/cards/named?fuzzy="+encodeURIComponent(nome)); return c&&c.object==="card"?c:null; }catch(e){ return null; }
+}
+async function cartaCompleta(c){
+  if(c && !c.parcial) return c;
+  try{ var d=await api("/cards/named?exact="+encodeURIComponent(c.name)); return d&&d.object==="card"?d:c; }catch(e){ return c; }
+}
+
+/* ================= câmera ao vivo ================= */
+var video=$("video"), quadro=document.createElement("canvas"), fluxo=null, rodando=false;
+var votos=[], inicioTentativa=0, quadrosTentativa=0, ultimaLeitura=null, pausado=false;
+
+async function ligarCamera(){
+  try{
+    fluxo=await navigator.mediaDevices.getUserMedia({audio:false,video:{facingMode:{ideal:"environment"},width:{ideal:1920},height:{ideal:1920}}});
+  }catch(e){
+    alertar("Não consegui abrir a câmera ("+e.name+"). No iPhone: Ajustes → Safari → Câmera → Permitir.");
+    return;
+  }
+  video.srcObject=fluxo;
+  $("visor").hidden=false; $("leitura").hidden=false;
+  await video.play().catch(function(){});
+  $("ligar").textContent="Desligar a câmera";
+  novaTentativa();
+  rodando=true; laco();
+}
+function desligarCamera(){
+  rodando=false;
+  if(fluxo) fluxo.getTracks().forEach(function(t){ t.stop(); });
+  fluxo=null; $("visor").hidden=true; $("ligar").textContent="Ligar a câmera";
+}
+function alertar(t){ $("carregando").hidden=false; $("carregando").textContent=t; }
+
+/* onde o molde cai dentro do vídeo (o vídeo usa object-fit: cover) */
+function retanguloDoMolde(){
+  var vw=video.videoWidth, vh=video.videoHeight;
+  var caixa=video.getBoundingClientRect(), m=$("molde").getBoundingClientRect();
+  var esc=Math.max(caixa.width/vw, caixa.height/vh);
+  var ox=(caixa.width-vw*esc)/2, oy=(caixa.height-vh*esc)/2;
+  return { x:(m.left-caixa.left-ox)/esc, y:(m.top-caixa.top-oy)/esc, w:m.width/esc, h:m.height/esc };
+}
+/* Cada quadro tenta um jeito diferente: reto, girado para um lado, girado
+   para o outro, com a faixa mais folgada. Carta torta ou meio fora do molde
+   acaba acertada em algum deles, e a votação junta os resultados. */
+/* `s` = a carta ocupa só essa fração do molde (quem segura longe demais) */
+var ESTRATEGIAS=[{a:0,e:1,s:1},{a:-3,e:1.2,s:1},{a:0,e:1.3,s:.9},{a:3,e:1.2,s:1},{a:0,e:1.3,s:.82},{a:0,e:1.45,s:1}], vezEstrategia=0;
+var cartaCanvas=document.createElement("canvas");
+function endireitar(fonte,r0,ang,escala){
+  var s=escala||1, r={x:r0.x+r0.w*(1-s)/2, y:r0.y+r0.h*(1-s)/2, w:r0.w*s, h:r0.h*s};
+  var cw=Math.round(r.w*1.12), ch=Math.round(r.h*1.06);
+  cartaCanvas.width=cw; cartaCanvas.height=ch;
+  var g=cartaCanvas.getContext("2d");
+  g.save(); g.translate(cw/2,ch/2); g.rotate(-ang*Math.PI/180);
+  g.drawImage(fonte,-(r.x+r.w/2),-(r.y+r.h/2)); g.restore();
+  return {canvas:cartaCanvas, mx:(cw-r.w)/2, my:(ch-r.h)/2, w:r.w, h:r.h};
+}
+function faixa(c,f,exp){
+  var w=c.w*f.w*(1+(exp-1)*.35), h=c.h*f.h*exp;
+  var cx=c.mx+c.w*(f.x+f.w/2), cy=c.my+c.h*(f.y+f.h/2);
+  var x=Math.max(0,cx-w/2), y=Math.max(0,cy-h/2);
+  return {x:x, y:y, w:Math.min(w,c.canvas.width-x), h:Math.min(h,c.canvas.height-y)};
+}
+
+function novaTentativa(){ votos=[]; inicioTentativa=Date.now(); quadrosTentativa=0; pausado=false; $("molde").className="molde"; }
+
+async function laco(){
+  while(rodando){
+    if(pausado || !video.videoWidth){ await esperar(200); continue; }
+    try{ await lerQuadro(); }catch(e){ console.warn(e); }
+    await esperar(150);
+  }
+}
+
+async function lerQuadro(){
+  var t0=performance.now();
+  quadro.width=video.videoWidth; quadro.height=video.videoHeight;
+  quadro.getContext("2d").drawImage(video,0,0);
+  var est=ESTRATEGIAS[vezEstrategia++%ESTRATEGIAS.length];
+  var carta=endireitar(quadro,retanguloDoMolde(),est.a,est.s);
+  $("molde").className="molde lendo";
+
+  var cR=tratar(carta.canvas,faixa(carta,FAIXA_RODAPE,est.e),160,$("c-rodape"),true);
+  var dR=await ocr(cR,"rodape");
+  var cN=tratar(carta.canvas,faixa(carta,FAIXA_NOME,est.e),90,$("c-nome"),false);
+  var dN=await ocr(cN,"nome");
+  quadrosTentativa++;
+  var seg=(Date.now()-inicioTentativa)/1000;
+  $("dica-visor").textContent = seg<4 ? "Encaixe a carta no molde, a um palmo do celular"
+    : seg<9 ? "Aproxime: a carta tem que encher o molde" : "Tente mais luz, sem reflexo na carta";
+
+  var rod=lerRodape(dR.text), nome=limparNome(dN.text);
+  var a=await porRodape(rod.colecao,rod.numero), b=await porNome(nome);
+  var via, carta1=a||b, peso;
+  if(a&&b&&a.oracle_id===b.oracle_id){ via="as duas leituras concordam"; peso=2; }
+  else if(a&&b){ via="CONFLITO"; peso=0; carta1=null; }
+  else if(a){ via="só o rodapé"; peso=1; }
+  else if(b){ via="só o nome"; peso=1; }
+  else { via="nada"; peso=0; }
+
+  ultimaLeitura={rodapeBruto:dR.text.trim(), nomeBruto:dN.text.trim(), rod:rod, nome:nome, via:via,
+                 cartaRodape:a&&a.name, cartaNome:b&&b.name, ms:Math.round(performance.now()-t0)};
+  mostrarLeitura(ultimaLeitura);
+
+  if(carta1 && peso>0) votos.push({id:carta1.oracle_id, peso:peso, carta:(a||carta1), via:via});
+  votos=votos.slice(-6);
+  decidir();
+}
+
+/* Aceita quando: (a) as duas leituras concordaram pelo menos uma vez e mais
+   um quadro concorda; ou (b) três quadros concordam sem conflito. */
+function decidir(){
+  /* Aceita quando: as duas leituras concordaram num quadro e mais um quadro
+     confirma; ou 3 quadros só pelo nome; ou 4 só pelo rodapé (o número é a
+     leitura que pode sair "certa" e errada ao mesmo tempo: 0227 → 0237). */
+  var soma={}, conf={}, soNome={}, soRod={}, ultima={}, comImpressao={};
+  votos.forEach(function(v){
+    soma[v.id]=(soma[v.id]||0)+1; ultima[v.id]=v;
+    if(v.peso===2) conf[v.id]=1;
+    if(v.via==="só o nome") soNome[v.id]=(soNome[v.id]||0)+1;
+    if(v.via==="só o rodapé") soRod[v.id]=(soRod[v.id]||0)+1;
+    if(v.carta && !v.carta.parcial) comImpressao[v.id]=v.carta;
+  });
+  var ids=Object.keys(soma);
+  if(ids.length>1){ $("estado").textContent="leituras divergentes, segure firme"; $("estado").className="estado warn"; }
+  for(var i=0;i<ids.length;i++){
+    var id=ids[i];
+    if((conf[id] && soma[id]>=2) || (soNome[id]||0)>=3 || (soRod[id]||0)>=4 || soma[id]>=4){
+      var v=ultima[id]; if(comImpressao[id]) v={carta:comImpressao[id],via:v.via,id:id};
+      achou(v); return;
+    }
+  }
+  if(ids.length===1){ $("estado").textContent="quase lá"; $("estado").className="estado warn"; }
+  else if(!ids.length){ $("estado").textContent="procurando…"; $("estado").className="estado"; }
+}
+
+function mostrarLeitura(l){
+  $("r-rodape").textContent=(l.rod.colecao||"?")+" "+(l.rod.numero||"?")+(l.cartaRodape?" → "+l.cartaRodape:"");
+  $("r-rodape-bruto").textContent="«"+l.rodapeBruto.replace(/\s+/g," ")+"»";
+  $("r-nome").textContent=(l.nome||"?")+(l.cartaNome?" → "+l.cartaNome:"");
+  $("r-nome-bruto").textContent="«"+l.nomeBruto.replace(/\s+/g," ")+"»";
+  $("r-tempo").textContent="quadro lido em "+l.ms+" ms · "+l.via;
+}
+
+/* ================= resultado e registro ================= */
+var REG_CHAVE="grimorio.lab.registro";
+var registro=ler(REG_CHAVE,[]);
+var atual=null;
+
+async function achou(v){
+  pausado=true;
+  $("molde").className="molde achou";
+  if(v.carta && v.carta.parcial) v.carta=await cartaCompleta(v.carta);
+  var c=v.carta, img=(c.image_uris||(c.card_faces&&c.card_faces[0].image_uris)||{}).normal;
+  $("achado-img").src=img||""; $("achado-img").alt=c.name;
+  $("achado-nome").textContent=c.name;
+  $("achado-info").textContent=(c.set||"").toUpperCase()+" "+(c.collector_number||"")+" · "+v.via;
+  var seg=((Date.now()-inicioTentativa)/1000).toFixed(1);
+  $("achado-tempo").textContent="reconhecida em "+seg+" s ("+quadrosTentativa+" quadros)";
+  $("achado").hidden=false;
+  $("estado").textContent="reconhecida"; $("estado").className="estado ok";
+  atual={em:new Date().toISOString(), modo:"camera", carta:c.name, colecao:(c.set||"").toUpperCase(), numero:c.collector_number,
+         via:v.via, segundos:+seg, quadros:quadrosTentativa, ultima:ultimaLeitura};
+  if(navigator.vibrate) navigator.vibrate(60);
+}
+function anotar(resultado, extra){
+  var e=atual||{em:new Date().toISOString(), modo:"camera", segundos:+((Date.now()-inicioTentativa)/1000).toFixed(1),
+                   quadros:quadrosTentativa, ultima:ultimaLeitura};
+  e.resultado=resultado; if(extra) e.nota=extra;
+  registro.push(e); guardar(REG_CHAVE,registro); desenharRegistro();
+  atual=null; $("achado").hidden=true;
+  novaTentativa();
+}
+function desenharRegistro(){
+  var ok=0,erro=0,nada=0;
+  var ol=$("registro"); ol.textContent="";
+  registro.forEach(function(e){
+    if(e.resultado==="acertou") ok++; else if(e.resultado==="errou") erro++; else nada++;
+  });
+  registro.slice().reverse().slice(0,30).forEach(function(e){
+    var li=document.createElement("li");
+    li.textContent=(e.resultado==="acertou"?"✓ ":e.resultado==="errou"?"✗ ":"… ")+(e.carta||"não reconheceu")+
+      (e.segundos!=null?" · "+e.segundos+" s":"")+(e.modo==="foto"?" · foto":"")+(e.nota?" · "+e.nota:"");
+    ol.appendChild(li);
+  });
+  $("n-total").textContent=registro.length; $("n-ok").textContent=ok; $("n-erro").textContent=erro; $("n-nada").textContent=nada;
+}
+
+function relatorio(){
+  var ok=registro.filter(function(e){return e.resultado==="acertou";});
+  var tempos=ok.map(function(e){return e.segundos;}).filter(function(x){return x!=null;}).sort(function(a,b){return a-b;});
+  var med=tempos.length?tempos[Math.floor(tempos.length/2)]:null;
+  var linhas=["GRIMÓRIO — relatório do laboratório do scanner",
+    "aparelho: "+navigator.userAgent,
+    "tentativas: "+registro.length+" | acertou: "+ok.length+" | errou: "+registro.filter(function(e){return e.resultado==="errou";}).length+
+    " | não reconheceu: "+registro.filter(function(e){return e.resultado==="nada";}).length,
+    "tempo mediano até reconhecer: "+(med!=null?med+" s":"—"), "",
+    JSON.stringify(registro)];
+  return linhas.join("\n");
+}
+
+/* ================= modo foto (câmera nativa do iPhone) ================= */
+/* A câmera do próprio iPhone foca de perto e tira foto em alta resolução,
+   coisa que um site não controla. Sem molde, então lê a foto inteira. */
+async function lerFoto(arquivo){
+  var img=await createImageBitmap(arquivo);
+  var lado=Math.max(img.width,img.height), k=Math.min(1,2000/lado);
+  var c=document.createElement("canvas"); c.width=Math.round(img.width*k); c.height=Math.round(img.height*k);
+  c.getContext("2d").drawImage(img,0,0,c.width,c.height);
+  $("leitura").hidden=false; $("estado").textContent="lendo a foto…"; $("estado").className="estado";
+  var t0=performance.now();
+  var d=await ocr(c,"inteira");
+  /* Na foto inteira qualquer palavra pode parecer código de coleção ("Who"
+     vira WHO, que existe). Então o rodapé só vale no formato completo:
+     código seguido do idioma ("FDN • EN") e o número na mesma linha ou na
+     de cima. E o nome: cada linha lida é comparada com a lista de nomes. */
+  var linhas=(d.lines||[]).map(function(l){ return {t:l.text, alt:l.bbox.y1-l.bbox.y0}; });
+  var rod=rodapeEstrito(linhas.map(function(l){ return l.t; }));
+  var melhor=null, maisAlta=null;
+  linhas.forEach(function(l){
+    var letras=l.t.replace(/[^A-Za-zÀ-ÿ]/g,"").length;
+    if(letras<4) return;
+    var c=casarNomeLocal(limparNome(l.t)||l.t);
+    if(c && (!melhor || c.nota>melhor.c.nota)) melhor={c:c,texto:l.t};
+    if(!maisAlta || l.alt>maisAlta.alt) maisAlta=l;
+  });
+  var nome=melhor?limparNome(melhor.texto):limparNome(maisAlta?maisAlta.t:"");
+  var a=await porRodape(rod.colecao,rod.numero), b=melhor?melhor.c:await porNome(nome);
+  var via=(a&&b&&a.oracle_id===b.oracle_id)?"as duas leituras concordam":(a&&b)?"CONFLITO":a?"só o rodapé":b?"só o nome":"nada";
+  ultimaLeitura={rodapeBruto:d.text.trim().slice(0,300), nomeBruto:melhor?melhor.texto:(maisAlta?maisAlta.t:""), rod:rod, nome:nome, via:via,
+                 cartaRodape:a&&a.name, cartaNome:b&&b.name, ms:Math.round(performance.now()-t0)};
+  mostrarLeitura(ultimaLeitura);
+  var carta=(via==="CONFLITO")?null:(a||b);
+  inicioTentativa=Date.now()-ultimaLeitura.ms; quadrosTentativa=1;
+  if(carta){ await achou({carta:carta,via:via}); if(atual) atual.modo="foto"; }
+  else { $("estado").textContent="não reconheceu nesta foto"; $("estado").className="estado bad";
+         registro.push({em:new Date().toISOString(),modo:"foto",resultado:"nada",ultima:ultimaLeitura}); guardar(REG_CHAVE,registro); desenharRegistro(); }
+}
+
+/* ================= botões ================= */
+$("ligar").addEventListener("click",function(){ if(rodando) desligarCamera(); else ligarCamera(); });
+$("foto").addEventListener("click",function(){ $("arquivo").click(); });
+$("arquivo").addEventListener("change",function(){ var f=this.files&&this.files[0]; this.value=""; if(f) lerFoto(f); });
+$("acertou").addEventListener("click",function(){ anotar("acertou"); });
+$("errou").addEventListener("click",function(){
+  var qual=prompt("Qual era a carta? (opcional)")||"";
+  anotar("errou", qual?"era "+qual:"");
+});
+$("nao-reconheceu").addEventListener("click",function(){
+  atual=null; $("achado").hidden=true;
+  anotar("nada", ultimaLeitura?("última leitura: "+ultimaLeitura.via):"");
+});
+$("salvar-quadro").addEventListener("click",function(){
+  if(!quadro.width) return;
+  quadro.toBlob(function(b){
+    var a=document.createElement("a"); a.href=URL.createObjectURL(b);
+    a.download="quadro-"+Date.now()+".jpg"; document.body.appendChild(a); a.click(); a.remove();
+  },"image/jpeg",0.9);
+});
+$("copiar").addEventListener("click",async function(){
+  var t=relatorio(), ta=$("relatorio"); ta.value=t; ta.hidden=false;
+  try{ await navigator.clipboard.writeText(t); this.textContent="Copiado!"; }
+  catch(e){ ta.select(); this.textContent="Selecione e copie"; }
+  var b=this; setTimeout(function(){ b.textContent="Copiar relatório"; },2500);
+});
+$("zerar").addEventListener("click",function(){
+  if(!confirm("Apagar todo o registro de testes?")) return;
+  registro=[]; guardar(REG_CHAVE,registro); desenharRegistro(); $("relatorio").hidden=true;
+});
+document.addEventListener("visibilitychange",function(){ if(document.hidden && rodando) desligarCamera(); });
+
+desenharRegistro();
+if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){
+  $("ligar").hidden=true;
+}
+if(typeof Tesseract==="undefined"){
+  alertar("Não consegui baixar o leitor de texto. Confira a internet e recarregue a página.");
+}else{
+  Promise.all([carregarColecoes().then(carregarIndice), prepararLeitor()]).catch(function(e){
+    alertar("O leitor de texto não carregou ("+(e&&e.message||e)+"). Recarregue a página.");
+  });
+}
+window.__lab={ lerRodape:lerRodape, limparNome:limparNome, casarNomeLocal:casarNomeLocal, indice:function(){ return INDICE.length; }, registro:function(){ return registro; }, votos:function(){ return votos; } };
+})();
+</script>
+</body>
+</html>
