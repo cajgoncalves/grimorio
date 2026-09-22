@@ -44,7 +44,7 @@ window.DICIONARIO.blb = {
  "a82ea8f2-e576-46cd-aa08-9c98d6029db4": {
   "n": "Ruthless Negotiation",
   "t": "Feitiço",
-  "x": "O oponente alvo exila um card da própria mão. Se esta mágica foi conjurada de um cemitério, compre um card.\nLampejo do passado {4}{B}",
+  "x": "O oponente alvo exila um card da própria mão. Se esta mágica foi conjurada de um cemitério, compre um card.\nRecapitular {4}{B}",
   "s": "Faz o oponente jogar fora uma carta da mão. Mais tarde dá para lançar de novo do cemitério, e aí você ainda compra um card."
  },
  "0534e20d-8352-4d9f-a617-378070602673": {
@@ -122,7 +122,7 @@ window.DICIONARIO.blb = {
  "29423a9a-31a6-4605-8b49-a75895038a3a": {
   "n": "Wick's Patrol",
   "t": "Criatura — Rato Bruxo",
-  "x": "Quando Wick's Patrol entra no campo de batalha, use moer três cards. Quando fizer isso, a criatura alvo que um oponente controla recebe -X/-X até o final do turno, onde X é o maior valor de mana entre os cards em seu cemitério.",
+  "x": "Quando Wick's Patrol entrar no campo de batalha, triture três cards. Quando fizer isso, a criatura alvo que um oponente controla recebe -X/-X até o final do turno, sendo X o maior valor de mana entre os cards em seu cemitério.",
   "s": "Joga três cards do seu grimório no cemitério e, com isso, enfraquece muito uma criatura do oponente — quanto mais cara a carta no seu cemitério, mais forte o efeito."
  },
  "2e5b8973-4f6e-4abe-bbbe-81fdca784997": {

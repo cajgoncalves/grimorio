@@ -136,6 +136,15 @@ input:focus-visible{outline:2px solid var(--gold);outline-offset:1px}
 .vazio p{margin:0 0 .5rem}
 .vazio p:last-child{margin-bottom:0}
 .vazio strong{color:var(--ink);font-family:Eczar,Georgia,serif;font-weight:600}
+/* contador de progresso das coleções revisadas à mão */
+.progresso{margin-top:.8rem;padding-top:.7rem;border-top:1px solid var(--rule)}
+.progresso h3{margin:0 0 .45rem;font:600 .98rem Eczar,Georgia,serif;color:var(--ink)}
+.progresso .item{margin:.45rem 0}
+.progresso .rotulo{display:flex;justify-content:space-between;gap:.5rem;font-size:.86rem}
+.progresso .rotulo b{color:var(--ink);font-weight:600}
+.progresso .barra{height:7px;border-radius:4px;background:var(--rule);overflow:hidden;margin-top:.25rem}
+.progresso .barra i{display:block;height:100%;background:var(--gold);border-radius:4px}
+.progresso .falta{font-size:.78rem;margin-top:.15rem}
 
 /* ---- seletor de tema ---- */
 .btn-tema{
@@ -669,6 +678,7 @@ footer a{color:var(--gold)}
     texto oficial da Wizards quando existe, e traduzida aqui quando não existe.</p>
     <p>Na aba <strong>Termos</strong> ficam as palavras-chave explicadas, com um treino;
     em <strong>Turno</strong>, as fases da rodada; em <strong>Vida</strong>, o contador da partida.</p>
+    <div class="progresso" id="progresso" hidden></div>
   </div>
 </section>
 
@@ -728,6 +738,7 @@ footer a{color:var(--gold)}
   Texto, tipo e imagem das cartas vêm do <a href="https://scryfall.com" target="_blank" rel="noopener">Scryfall</a>, que traz a tradução oficial impressa pela Wizards.
   O texto com validade de regras é sempre o Oracle em inglês — uma carta antiga pode ter mudado desde a impressão.
   <br><span id="carimbo" style="opacity:.7"></span>
+  <br><span id="progresso-rodape" style="opacity:.7"></span>
   <p class="fan-policy">
     Grimório is unofficial Fan Content permitted under the Fan Content Policy.
     Not approved/endorsed by Wizards. Portions of the materials used are property
@@ -892,52 +903,52 @@ var Traducao = (function () {
     "lifelink":"Vínculo com a vida", "trample":"Atropelar",
     "vigilance":"Vigilância", "haste":"Ímpeto", "defender":"Defensor",
     "menace":"Ameaçar", "indestructible":"Indestrutível", "flash":"Lampejo",
-    "hexproof":"Resistência a magia", "shroud":"Camuflagem",
+    "hexproof":"Resistência a magia", "shroud":"Manto",
     "prowess":"Destreza", "ward":"Salvaguarda", "fear":"Amedrontar",
     "intimidate":"Intimidar", "devoid":"Desprovido", "changeling":"Morfoloide",
-    "convoke":"Convocar", "delve":"Escavar", "improvise":"Improvisar",
+    "convoke":"Convocar", "delve":"Esquadrinhar", "improvise":"Improvisar",
     "cascade":"Cascata", "storm":"Rajada", "affinity":"Afinidade",
-    "persist":"Persistir", "undying":"Imorredouro", "wither":"Murchar",
-    "infect":"Infecção", "evolve":"Evoluir", "extort":"Extorquir",
+    "persist":"Persistir", "undying":"Imortal", "wither":"Murchar",
+    "infect":"Infectar", "evolve":"Evoluir", "extort":"Extorquir",
     "ascend":"Ascender", "mentor":"Mentor", "haunt":"Assombrar",
     "partner":"Parceiro", "living weapon":"Arma viva", "split second":"Fração de segundo",
     "cumulative upkeep":"Manutenção cumulativa", "banding":"Agrupar",
-    "horsemanship":"Cavalgar", "shadow":"Sombra", "provoke":"Provocar",
+    "horsemanship":"Equitação", "shadow":"Sombra", "provoke":"Provocar",
     "rampage":"Fúria", "bushido":"Bushido", "soulshift":"Transmigração",
-    "exalted":"Exaltar", "annihilator":"Aniquilador", "battle cry":"Grito de batalha",
-    "miracle":"Milagre", "unleash":"Libertar", "bloodthirst":"Sede de sangue",
+    "exalted":"Exaltado", "annihilator":"Aniquilador", "battle cry":"Grito de guerra",
+    "miracle":"Milagre", "unleash":"Liberar", "bloodthirst":"Sede de sangue",
     "flanking":"Flanquear", "echo":"Eco", "fading":"Enfraquecer",
-    "vanishing":"Dissipar", "madness":"Insanidade", "hideaway":"Esconderijo",
-    "conspire":"Conspirar", "melee":"Combate corpo a corpo", "myriad":"Miríade",
-    "skulk":"Esgueirar", "crew":"Tripular", "fabricate":"Fabricar",
+    "vanishing":"Desaparecer", "madness":"Loucura", "hideaway":"Refúgio",
+    "conspire":"Conspirar", "melee":"Embate", "myriad":"Miríade",
+    "skulk":"Esquivo", "crew":"Tripular", "fabricate":"Fabricar",
     "afterlife":"Pós-vida", "riot":"Tumulto", "spectacle":"Espetáculo",
-    "adapt":"Adaptar", "amass":"Amontoar", "mutate":"Sofrer mutação",
-    "boast":"Ostentar", "foretell":"Predizer", "disturb":"Perturbar",
-    "daybound":"Ligado ao dia", "nightbound":"Ligado à noite",
+    "adapt":"Adaptar", "amass":"Arregimentar", "mutate":"Mutação",
+    "boast":"Vanglória", "foretell":"Profetizar", "disturb":"Perturbar",
+    "daybound":"Diurno", "nightbound":"Noturno",
     "decayed":"Decomposto", "blitz":"Blitz", "casualty":"Baixa",
-    "connive":"Conluiar", "enlist":"Alistar", "read ahead":"Ler adiante",
-    "prototype":"Protótipo", "unearth":"Desenterrar", "backup":"Reforço",
-    "bargain":"Barganhar", "disguise":"Disfarce", "cloak":"Encobrir",
+    "connive":"Acobertar", "enlist":"Alistar", "read ahead":"Adiantar leitura",
+    "prototype":"Protótipo", "unearth":"Desenterrar", "backup":"Apoio",
+    "bargain":"Negociar", "disguise":"Disfarce", "cloak":"Ocultar",
     "plot":"Tramar", "saddle":"Selar", "spree":"Série", "gift":"Presente",
     "offspring":"Prole", "impending":"Iminente", "cycling":"Reciclar",
-    "equip":"Equipar", "bestow":"Agraciar", "kicker":"Custo adicional",
-    "buyback":"Recompra", "flashback":"Lampejo do passado", "entwine":"Entrelaçar",
-    "scavenge":"Catar", "transmute":"Transmutar", "replicate":"Replicar",
-    "graft":"Enxertar", "ripple":"Ondular", "suspend":"Suspender",
+    "equip":"Equipar", "bestow":"Agraciar", "kicker":"Reforçar",
+    "buyback":"Recuperar", "flashback":"Recapitular", "entwine":"Entrelaçar",
+    "scavenge":"Necrofagia", "transmute":"Transmutação", "replicate":"Replicar",
+    "graft":"Enxerto", "ripple":"Ondular", "suspend":"Suspender",
     "amplify":"Amplificar", "landwalk":"Travessia", "forestwalk":"Travessia de floresta",
     "islandwalk":"Travessia de ilha", "swampwalk":"Travessia de pântano",
     "mountainwalk":"Travessia de montanha", "plainswalk":"Travessia de planície",
-    "landfall":"Aterragem", "metalcraft":"Metalurgia", "threshold":"Limiar",
+    "landfall":"Aterragem", "metalcraft":"Maestria com metais", "threshold":"Limiar",
     "delirium":"Delírio", "revolt":"Revolta", "constellation":"Constelação",
     "eerie":"Sinistro", "valiant":"Valente", "expend":"Despender",
     /* mecânicas recentes, de coleções que já não saem em português */
-    "exhaust":"Exaurir", "survival":"Sobrevivência", "raid":"Ataque súbito",
+    "exhaust":"Exaurir", "survival":"Sobrevivência", "raid":"Raide",
     "max speed":"Velocidade máxima", "start your engines!":"Liguem os motores!",
     "flurry":"Rajada de golpes", "heroic":"Heroico", "void":"Vazio",
     "warp":"Distorcer", "double team":"Dupla", "endure":"Suportar",
-    "surveil":"Vigiar", "scry":"Vidência", "mill":"Moer",
-    "investigate":"Investigar", "explore":"Explorar", "goad":"Incitar",
-    "descend":"Descender", "craft":"Elaborar", "discover":"Descobrir",
+    "surveil":"Vigiar", "scry":"Vidência", "mill":"Triturar",
+    "investigate":"Investigar", "explore":"Explorar", "goad":"Atiçar",
+    "descend":"Descer", "craft":"Construir", "discover":"Descobrir",
     "toxic":"Tóxico", "corrupted":"Corrompido", "proliferate":"Proliferar",
     "incubate":"Incubar", "battalion":"Batalhão", "landcycling":"Reciclar terreno",
     "basic landcycling":"Reciclar terreno básico"
@@ -1217,7 +1228,7 @@ var Traducao = (function () {
     [/^this ability triggers only twice each turn$/i, "esta habilidade dispara somente duas vezes a cada turno"],
     [/^activate only during your turn$/i, "ative somente durante o seu turno"],
     [/^this spell can'?t be countered$/i, "esta mágica não pode ser anulada"],
-    [/^where x is (.+)$/i, function(m){ var t=traduzFraseInterna(m[1]); return t ? "onde X é " + t : null; }],
+    [/^where x is (.+)$/i, function(m){ var t=traduzFraseInterna(m[1]); return t ? "sendo X " + t : null; }],
     [/^the number of (.+?) you control$/i, function(m){
       var t=coisaTexto(m[1]); return t ? "o número de " + t + " que você controla" : null; }],
 
@@ -1297,7 +1308,7 @@ var Traducao = (function () {
     /* --- ações que viraram palavra-chave --- */
     [new RegExp("^surveil " + N + "$","i"), function(m){ return "use vigiar " + num(m[1]); }],
     [new RegExp("^scry " + N + "$","i"), function(m){ return "use vidência " + num(m[1]); }],
-    [new RegExp("^mill " + N + " cards?$","i"), function(m){ return "use moer " + num(m[1]); }],
+    [new RegExp("^mill " + N + " cards?$","i"), function(m){ return "triture " + num(m[1]) + " card" + (m[1]==="1"||/^(a|one)$/i.test(m[1])?"":"s"); }],
     [/^investigate$/i, "investigue"],
     [/^shuffle$/i, "embaralhe"],
     [/^then that player shuffles$/i, "depois aquele jogador embaralha"],
@@ -2388,6 +2399,42 @@ function carregarIndice(){
   return indicePedido;
 }
 
+/* Contador da tela inicial e do rodapé: quanto de cada coleção já tem
+   explicação e tradução revisada. Os números vêm prontos no dic/indice.js
+   (calculados pelo gerar-indice.js). */
+function mostrarProgresso(){
+  var P = window.DIC_PROGRESSO; if(!P) return;
+  var caixa = document.getElementById("progresso"), rod = document.getElementById("progresso-rodape");
+  var partesRodape = [];
+  Object.keys(P).forEach(function(col){
+    var p = P[col];
+    if(caixa){
+      var h = document.createElement("h3"); h.textContent = p.nome + " no Grimório"; caixa.appendChild(h);
+      [["Explicação da carta", p.explicadas, p.total, "cartas da coleção"],
+       ["Tradução revisada", p.traduzidas, p.semPt, "cartas sem português oficial"]].forEach(function(l){
+        var pct = l[2] ? Math.round(100*l[1]/l[2]) : 0;
+        var it = document.createElement("div"); it.className = "item";
+        var r = document.createElement("div"); r.className = "rotulo";
+        var a = document.createElement("span"); a.textContent = l[0];
+        var b = document.createElement("b"); b.textContent = l[1] + " de " + l[2] + " (" + pct + "%)";
+        r.appendChild(a); r.appendChild(b); it.appendChild(r);
+        var barra = document.createElement("div"); barra.className = "barra";
+        barra.setAttribute("role","progressbar"); barra.setAttribute("aria-valuemin","0");
+        barra.setAttribute("aria-valuemax",String(l[2])); barra.setAttribute("aria-valuenow",String(l[1]));
+        barra.setAttribute("aria-label", l[0] + ": " + l[1] + " de " + l[2]);
+        var i = document.createElement("i"); i.style.width = pct + "%"; barra.appendChild(i); it.appendChild(barra);
+        var f = document.createElement("div"); f.className = "falta";
+        f.textContent = (l[2]-l[1]) ? "faltam " + (l[2]-l[1]) + " " + l[3] : "completo!";
+        it.appendChild(f); caixa.appendChild(it);
+      });
+      caixa.hidden = false;
+    }
+    partesRodape.push(p.nome + ": " + p.explicadas + "/" + p.total + " com explicação · " + p.traduzidas + "/" + p.semPt + " traduzidas");
+  });
+  if(rod) rod.textContent = partesRodape.join(" | ");
+}
+carregarIndice().then(mostrarProgresso);
+
 async function consultarDicionario(carta){
   if(!carta || !carta.oracle_id) return null;
 
@@ -3131,7 +3178,7 @@ var GLOSS=[
   ["Exile","Exile","Tire a carta do jogo, fora do cemitério."],
   ["Sacrifice","Sacrifique","Mande um permanente seu para o cemitério por escolha própria."],
   ["Counter target spell","Anule","A mágica não resolve e vai direto para o cemitério."],
-  ["Mill","Moer","Mover cartas do topo do grimório direto para o cemitério."],
+  ["Mill","Triturar","Mover cartas do topo do grimório direto para o cemitério."],
   ["Fight","Lutar","Duas criaturas causam dano uma à outra igual ao poder de cada uma."],
   ["Scry N","Vidência","Olhe as primeiras cartas do grimório e escolha deixar no topo ou no fundo."],
   ["Search your library","Procure no seu grimório","Depois de procurar, embaralhe."],
