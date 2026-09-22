@@ -2403,35 +2403,32 @@ function carregarIndice(){
    explicação e tradução revisada. Os números vêm prontos no dic/indice.js
    (calculados pelo gerar-indice.js). */
 function mostrarProgresso(){
-  var P = window.DIC_PROGRESSO; if(!P) return;
+  var p = window.DIC_PROGRESSO; if(!p || !p.todas) return;
   var caixa = document.getElementById("progresso"), rod = document.getElementById("progresso-rodape");
-  var partesRodape = [];
-  Object.keys(P).forEach(function(col){
-    var p = P[col];
-    if(caixa){
-      var h = document.createElement("h3"); h.textContent = p.nome + " no Grimório"; caixa.appendChild(h);
-      [["Explicação da carta", p.explicadas, p.total, "cartas da coleção"],
-       ["Tradução revisada", p.traduzidas, p.semPt, "cartas sem português oficial"]].forEach(function(l){
-        var pct = l[2] ? Math.round(100*l[1]/l[2]) : 0;
-        var it = document.createElement("div"); it.className = "item";
-        var r = document.createElement("div"); r.className = "rotulo";
-        var a = document.createElement("span"); a.textContent = l[0];
-        var b = document.createElement("b"); b.textContent = l[1] + " de " + l[2] + " (" + pct + "%)";
-        r.appendChild(a); r.appendChild(b); it.appendChild(r);
-        var barra = document.createElement("div"); barra.className = "barra";
-        barra.setAttribute("role","progressbar"); barra.setAttribute("aria-valuemin","0");
-        barra.setAttribute("aria-valuemax",String(l[2])); barra.setAttribute("aria-valuenow",String(l[1]));
-        barra.setAttribute("aria-label", l[0] + ": " + l[1] + " de " + l[2]);
-        var i = document.createElement("i"); i.style.width = pct + "%"; barra.appendChild(i); it.appendChild(barra);
-        var f = document.createElement("div"); f.className = "falta";
-        f.textContent = (l[2]-l[1]) ? "faltam " + (l[2]-l[1]) + " " + l[3] : "completo!";
-        it.appendChild(f); caixa.appendChild(it);
-      });
-      caixa.hidden = false;
-    }
-    partesRodape.push(p.nome + ": " + p.explicadas + "/" + p.total + " com explicação · " + p.traduzidas + "/" + p.semPt + " traduzidas");
-  });
-  if(rod) rod.textContent = partesRodape.join(" | ");
+  var mil = function(n){ return n.toLocaleString("pt-BR"); };
+  var pct = function(a,b){ var v = 100*a/b; return (v < 10 ? v.toFixed(1) : Math.round(v)).toString().replace(".",",") + "%"; };
+  if(caixa){
+    var h = document.createElement("h3"); h.textContent = "O Grimório até agora"; caixa.appendChild(h);
+    [["Explicação da carta", p.explicadas, p.todas, "cartas do Magic"],
+     ["Tradução revisada", p.traduzidas, p.semPt, "cartas sem português oficial"]].forEach(function(l){
+      var it = document.createElement("div"); it.className = "item";
+      var r = document.createElement("div"); r.className = "rotulo";
+      var a = document.createElement("span"); a.textContent = l[0];
+      var b = document.createElement("b"); b.textContent = mil(l[1]) + " de " + mil(l[2]) + " (" + pct(l[1],l[2]) + ")";
+      r.appendChild(a); r.appendChild(b); it.appendChild(r);
+      var barra = document.createElement("div"); barra.className = "barra";
+      barra.setAttribute("role","progressbar"); barra.setAttribute("aria-valuemin","0");
+      barra.setAttribute("aria-valuemax",String(l[2])); barra.setAttribute("aria-valuenow",String(l[1]));
+      barra.setAttribute("aria-label", l[0] + ": " + l[1] + " de " + l[2]);
+      /* mínimo visível de 2%: no começo a barra real seria um fio invisível */
+      var i = document.createElement("i"); i.style.width = Math.max(2, 100*l[1]/l[2]) + "%"; barra.appendChild(i); it.appendChild(barra);
+      var f = document.createElement("div"); f.className = "falta";
+      f.textContent = "faltam " + mil(l[2]-l[1]) + " " + l[3];
+      it.appendChild(f); caixa.appendChild(it);
+    });
+    caixa.hidden = false;
+  }
+  if(rod) rod.textContent = mil(p.explicadas) + " cartas com explicação · " + mil(p.traduzidas) + " com tradução revisada";
 }
 carregarIndice().then(mostrarProgresso);
 
@@ -3865,7 +3862,7 @@ window.addEventListener("appinstalled",function(){ barraInst.hidden=true; });
 /* Carimbo de versão: serve para saber, olhando a tela, qual versão está
    rodando — e se o tradutor carregou ou não. Uma fonte só para o número:
    o carimbo e o "número de coleção" dos créditos saem os dois daqui. */
-var VERSAO_APP = 19;
+var VERSAO_APP = 20;
 (function(){
   var c=document.getElementById("carimbo");
   var col=document.getElementById("colecao");

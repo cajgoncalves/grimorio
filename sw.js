@@ -1,10 +1,10 @@
 /* Service worker do "Magic em português".
    Três estratégias, uma para cada tipo de coisa:
-   - a própria página e seus ícones: cache primeiro (abre instantâneo, mesmo sem rede)
+   - a própria página, ícones e dicionários: rede primeiro, cache se não houver rede
    - consultas ao Scryfall: rede primeiro, cache como rede de segurança
    - imagens das cartas: cache primeiro (a imagem de uma carta nunca muda)      */
 
-var VERSAO = "v19";
+var VERSAO = "v20";
 var SHELL  = "mtgpt-shell-" + VERSAO;
 var DADOS  = "mtgpt-dados-" + VERSAO;
 var FIGS   = "mtgpt-figuras-" + VERSAO;
@@ -116,21 +116,36 @@ self.addEventListener("fetch", function (evento) {
     return;
   }
 
-  /* ---- a própria página: cache primeiro, atualizando por trás ---- */
+  /* ---- a própria página e os dicionários: rede primeiro ----
+     Antes era "cache primeiro, atualizando por trás": abria instantâneo,
+     mas cada atualização do site só aparecia na SEGUNDA vez que o app era
+     aberto — e, na primeira, a página nova podia rodar com o índice velho
+     dos dicionários, sem achar as explicações novas. Agora vai à rede e
+     usa o cache só se a rede falhar ou demorar mais de 3 segundos (sinal
+     fraco na mesa de jogo continua abrindo rápido, e sem internet também). */
   if (url.origin === self.location.origin) {
     evento.respondWith(
-      caches.match(pedido).then(function (guardada) {
-        var daRede = fetch(pedido).then(function (resposta) {
+      new Promise(function (resolver) {
+        var respondeu = false;
+        function responder(r) { if (!respondeu && r) { respondeu = true; resolver(r); } }
+        var doCache = function () {
+          return caches.match(pedido).then(function (g) { return g || caches.match("./index.html"); });
+        };
+        var espera = setTimeout(function () { doCache().then(responder); }, 3000);
+        fetch(pedido, { cache: "no-cache" }).then(function (resposta) {
           if (resposta && resposta.ok) {
             var copia = resposta.clone();
             caches.open(SHELL).then(function (c) { c.put(pedido, copia); });
+            clearTimeout(espera); responder(resposta);
+          } else {
+            doCache().then(function (g) { clearTimeout(espera); responder(g || resposta); });
           }
-          return resposta;
-        }).catch(function () { return guardada; });
-
-        return guardada || daRede;
-      }).catch(function () {
-        return caches.match("./index.html");
+        }).catch(function () {
+          doCache().then(function (g) {
+            clearTimeout(espera);
+            responder(g || new Response("Sem internet e sem cópia guardada.", { status: 503 }));
+          });
+        });
       })
     );
   }

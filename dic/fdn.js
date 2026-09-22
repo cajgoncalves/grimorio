@@ -8,7 +8,7 @@
      s = explicação em português do dia a dia
 
    Lote 1: cartas 730–771. Lote 2: cartas 700–729.
-   Lote 3: cartas brancas novas 1–28. */
+   Lote 3: cartas brancas novas 1–28. Lote 4: azuis novas 29–53. */
 
 window.DICIONARIO = window.DICIONARIO || {};
 window.DICIONARIO.fdn = {
@@ -471,5 +471,139 @@ window.DICIONARIO.fdn = {
   "t": "Criatura — Anjo Guerreiro",
   "x": "Voar\nToda vez que você ganhar pontos de vida pela primeira vez em cada turno, use vigiar 1. (Olhe o card do topo de seu grimório. Você pode colocá-lo em seu cemitério.)",
   "s": "Anjo 3/3 que voa. Na primeira vez que você ganha vida em cada turno, espia a carta de cima do grimório e pode jogar fora se não quiser comprá-la."
+ },
+
+ /* ---------------- lote 4: azuis novas 29–53 ---------------- */
+ "fe1556cc-32d0-4e51-bb15-f3fce669a5e1": {
+  "n": "Arcane Epiphany",
+  "t": "Mágica Instantânea",
+  "x": "Esta mágica custa {1} a menos para ser conjurada se você controlar um Mago.\nCompre três cards.",
+  "s": "Três cartas novas de uma vez. Com um Mago seu na mesa, sai 1 mais barata. Por ser instantânea, dá para usar no fim do turno do oponente, com a mana que você deixou sobrando."
+ },
+ "28045b32-4c1a-40e5-a15d-524d0f8fe6ec": {
+  "n": "Archmage of Runes",
+  "t": "Criatura — Gigante Mago",
+  "x": "As mágicas instantâneas e os feitiços que você conjura custam {1} a menos para serem conjurados.\nToda vez que você conjurar uma mágica instantânea ou um feitiço, compre um card.",
+  "s": "Com ele na mesa, cada instantânea ou feitiço que você joga fica 1 mais barato e ainda te dá uma carta nova. É uma máquina de comprar cartas; o oponente vai querer tirar ele de lá."
+ },
+ "4e473298-0b67-42b8-90a8-3bcdd73da473": {
+  "n": "Bigfin Bouncer",
+  "t": "Criatura — Tubarão Pirata",
+  "x": "Quando esta criatura entrar no campo de batalha, devolva a criatura alvo que um oponente controla para a mão de seu dono.",
+  "s": "Ao entrar, manda uma criatura do oponente de volta para a mão dele. Ele vai ter que gastar mana de novo para jogá-la. Mire na criatura mais cara."
+ },
+ "8d979a0b-ba04-4abb-8f78-c707ce15351a": {
+  "n": "Cephalid Inkmage",
+  "t": "Criatura — Polvo Mago",
+  "x": "Quando esta criatura entrar no campo de batalha, use vigiar 3. (Olhe os três cards do topo de seu grimório, depois coloque qualquer número deles em seu cemitério e o resto no topo de seu grimório em qualquer ordem.)\nLimiar — Esta criatura não pode ser bloqueada enquanto houver sete ou mais cards em seu cemitério.",
+  "s": "Ao entrar, você olha as 3 cartas de cima do grimório, joga fora as que não quer e arruma o resto. Isso ainda enche o cemitério: com 7 cartas ou mais lá, ela não pode mais ser bloqueada."
+ },
+ "d9a3207a-a330-4517-967e-f37c9a9f1355": {
+  "n": "Clinquant Skymage",
+  "t": "Criatura — Ave Mago",
+  "x": "Voar\nToda vez que você comprar um card, coloque um marcador +1/+1 nesta criatura.",
+  "s": "Começa 1/1, mas cresce +1/+1 a cada carta que você compra, inclusive a compra normal do começo do turno. Com cartas que fazem comprar mais, cresce rápido."
+ },
+ "9938d178-0ce6-45c0-b317-fd5c54231579": {
+  "n": "Curator of Destinies",
+  "t": "Criatura — Esfinge",
+  "x": "Esta mágica não pode ser anulada.\nVoar\nQuando esta criatura entrar no campo de batalha, olhe os cinco cards do topo de seu grimório e separe-os em uma pilha com a face para baixo e uma pilha com a face para cima. Um oponente escolhe uma dessas pilhas. Coloque aquela pilha na sua mão e a outra em seu cemitério.",
+  "s": "Ao entrar, você separa as 5 cartas de cima do grimório em dois montes: um virado para cima (o oponente vê) e um virado para baixo (ele não vê). O oponente escolhe qual monte vai para a sua mão, e o outro vai para o cemitério. Dica: coloque cartas boas nos dois montes para ele ficar na dúvida."
+ },
+ "4de0ccab-bb5d-4c7c-827e-36aa1d00b182": {
+  "n": "Drake Hatcher",
+  "t": "Criatura — Humano Mago",
+  "x": "Vigilância, destreza (Toda vez que você conjurar uma mágica que não seja de criatura, esta criatura recebe +1/+1 até o final do turno.)\nToda vez que esta criatura causar dano de combate a um jogador, coloque aquele número de marcadores de incubação nela.\nRemova três marcadores de incubação desta criatura: Crie uma ficha de criatura azul 2/2 do tipo Draco com voar.",
+  "s": "Cada ponto de dano que ela causa no oponente vira um marcador de incubação nela. A cada 3 marcadores, você pode criar um Draco 2/2 voador. Mágicas que não são criatura deixam ela maior no turno (destreza), o que ajuda a causar mais dano."
+ },
+ "cf402270-ebc6-481b-b478-0e3acab7002a": {
+  "n": "Elementalist Adept",
+  "t": "Criatura — Humano Mago",
+  "x": "Lampejo (Você pode conjurar esta mágica a qualquer momento em que puder conjurar uma mágica instantânea.)\nDestreza (Toda vez que você conjurar uma mágica que não seja de criatura, esta criatura recebe +1/+1 até o final do turno.)",
+  "s": "Dá para baixar no turno do oponente, até como bloqueadora surpresa. Cada instantânea ou feitiço que você jogar deixa ela +1/+1 até o fim do turno."
+ },
+ "7d4b6613-9000-4f53-9737-fe0338f3f629": {
+  "n": "Erudite Wizard",
+  "t": "Criatura — Humano Mago",
+  "x": "Toda vez que você comprar seu segundo card em cada turno, coloque um marcador +1/+1 nesta criatura.",
+  "s": "Cresce quando você compra 2 cartas no mesmo turno. No seu turno, a compra normal já conta como a primeira, então basta mais uma carta comprada para ela crescer."
+ },
+ "903d114b-1899-4e67-bee3-af0673850388": {
+  "n": "Faebloom Trick",
+  "t": "Mágica Instantânea",
+  "x": "Crie duas fichas de criatura azul 1/1 do tipo Fada com voar. Quando fizer isso, vire a criatura alvo que um oponente controla.",
+  "s": "Cria duas Fadinhas 1/1 voadoras e ainda vira uma criatura do oponente. Use no começo do turno dele para ela não poder atacar, ou no seu turno para tirar um bloqueador do caminho."
+ },
+ "1ba99ade-df8d-4654-882a-a5f4256ada3d": {
+  "n": "Grappling Kraken",
+  "t": "Criatura — Kraken",
+  "x": "Aterragem — Toda vez que um terreno entrar no campo de batalha sob seu controle, vire a criatura alvo que um oponente controla e coloque um marcador de atordoamento nela. (Se uma permanente com um marcador de atordoamento fosse desvirar, em vez disso, remova um marcador dela.)",
+  "s": "Cada terreno que você baixa vira uma criatura do oponente e a deixa atordoada: no próximo turno dele ela não desvira, então não pode atacar nem bloquear até lá."
+ },
+ "28c1a4a0-f58c-4d07-a918-51ff8a74f050": {
+  "n": "High Fae Trickster",
+  "t": "Criatura — Fada Mago",
+  "x": "Lampejo (Você pode conjurar esta mágica a qualquer momento em que puder conjurar uma mágica instantânea.)\nVoar\nVocê pode conjurar mágicas como se elas tivessem lampejo.",
+  "s": "Enquanto ela estiver na mesa, TODAS as suas cartas podem ser jogadas no turno do oponente, até criaturas e feitiços. Ótimo para surpreender e para jogar só depois de ver o que ele fez."
+ },
+ "b3c69bf4-880f-4198-a67c-87d23d9c3d41": {
+  "n": "Homunculus Horde",
+  "t": "Criatura — Homúnculo",
+  "x": "Toda vez que você comprar seu segundo card em cada turno, crie uma ficha que é uma cópia desta criatura.",
+  "s": "Toda vez que você compra a segunda carta no turno, ganha uma cópia dela. E cada cópia também tem essa habilidade, então a horda cresce cada vez mais rápido."
+ },
+ "be87e410-4302-43ee-b880-56eedf2b3648": {
+  "n": "Inspiration from Beyond",
+  "t": "Feitiço",
+  "x": "Triture três cards e depois devolva um card de mágica instantânea ou de feitiço de seu cemitério para a sua mão.\nRecapitular {5}{U}{U} (Você pode conjurar este card de seu cemitério pagando seu custo de recapitular. Depois, exile-o.)",
+  "s": "Joga as 3 cartas de cima do grimório no cemitério e depois recupera para a mão uma instantânea ou feitiço que estiver lá, inclusive uma que acabou de cair. Mais tarde, dá para usar de novo direto do cemitério pagando {5}{U}{U}."
+ },
+ "f6d3f145-00e0-47cd-91d8-0381c19a000d": {
+  "n": "Kaito, Cunning Infiltrator",
+  "t": "Planeswalker Lendário — Kaito",
+  "x": "Toda vez que uma criatura que você controla causar dano de combate a um jogador, coloque um marcador de lealdade em Kaito.\n+1: Até uma criatura alvo que você controla não pode ser bloqueada neste turno. Compre um card e depois descarte um card.\n−2: Crie uma ficha de criatura azul 2/1 do tipo Ninja.\n−9: Você recebe um emblema com \"Toda vez que um jogador conjurar uma mágica, você cria uma ficha de criatura azul 2/1 do tipo Ninja.\"",
+  "s": "Planeswalker: uma vez por turno você usa uma das habilidades. O número mostra quanto a lealdade dele sobe ou desce. O +1 deixa uma criatura sua passar sem ser bloqueada e troca uma carta da mão; o −2 cria um Ninja 2/1. Cada vez que uma criatura sua acerta o oponente, Kaito ganha lealdade. O oponente pode atacar ele para tirar lealdade."
+ },
+ "5d748bce-dff8-46fa-a3d1-633863b7bbff": {
+  "n": "Kiora, the Rising Tide",
+  "t": "Criatura Lendária — Tritão Nobre",
+  "x": "Quando Kiora entrar no campo de batalha, compre dois cards e depois descarte dois cards.\nLimiar — Toda vez que Kiora atacar, se houver sete ou mais cards em seu cemitério, você pode criar Scion of the Deep, uma ficha de criatura lendária azul 8/8 do tipo Polvo.",
+  "s": "Ao entrar, troca duas cartas da mão por duas novas, e isso já enche o cemitério. Com 7 cartas ou mais no cemitério, quando ela ataca você pode criar um polvo gigante 8/8. Como ele é lendário, só dá para ter um de cada vez."
+ },
+ "56b4a2f7-2d35-4d05-8d26-4f9f16c5f9f5": {
+  "n": "Lunar Insight",
+  "t": "Feitiço",
+  "x": "Compre um card para cada valor de mana diferente entre as permanentes não terreno que você controla.",
+  "s": "Conte suas permanentes (sem os terrenos) com custos diferentes: uma de custo 1, uma de 2 e uma de 4 dão três cartas. Duas de custo 2 contam uma vez só."
+ },
+ "542831c6-6279-4977-9b29-0fb9c0ebf04d": {
+  "n": "Mischievous Mystic",
+  "t": "Criatura — Humano Mago",
+  "x": "Voar\nToda vez que você comprar seu segundo card em cada turno, crie uma ficha de criatura azul 1/1 do tipo Fada com voar.",
+  "s": "Voa e, toda vez que você compra a segunda carta num turno, cria uma Fadinha 1/1 voadora."
+ },
+ "eb1dfa29-7371-4cb6-bfa2-16f7820b69be": {
+  "n": "Refute",
+  "t": "Mágica Instantânea",
+  "x": "Anule a mágica alvo. Compre um card e depois descarte um card.",
+  "s": "Anula qualquer mágica do oponente, seja criatura ou não, e ainda troca uma carta da sua mão. Deixe {1}{U}{U} livre no turno dele para ter ela pronta."
+ },
+ "5951f734-05d3-41ad-94ee-19bd310077d2": {
+  "n": "Skyship Buccaneer",
+  "t": "Criatura — Humano Pirata",
+  "x": "Voar\nRaide — Quando esta criatura entrar no campo de batalha, se você atacou neste turno, compre um card.",
+  "s": "Se você atacou neste turno, ela te dá uma carta ao entrar. Dica: ataque primeiro e baixe ela depois do combate."
+ },
+ "ddb7e868-8f1d-4d57-9ee2-ebadb17b398a": {
+  "n": "Sphinx of Forgotten Lore",
+  "t": "Criatura — Esfinge",
+  "x": "Lampejo (Você pode conjurar esta mágica a qualquer momento em que puder conjurar uma mágica instantânea.)\nVoar\nToda vez que esta criatura atacar, o card de mágica instantânea ou de feitiço alvo em seu cemitério ganha recapitular até o final do turno. O custo de recapitular é igual ao custo de mana daquele card. (Você pode conjurar aquele card de seu cemitério pagando seu custo de recapitular. Depois, exile-o.)",
+  "s": "Toda vez que ataca, uma instantânea ou feitiço do seu cemitério pode ser jogado de novo neste turno, pagando o custo normal dela. Depois de usada assim, a carta vai para o exílio."
+ },
+ "1d6796ce-9316-430a-8126-8b0414cf181c": {
+  "n": "Uncharted Voyage",
+  "t": "Mágica Instantânea",
+  "x": "O dono da criatura alvo a coloca no topo ou no fundo do grimório dele, à escolha dele.\nUse vigiar 1. (Olhe o card do topo de seu grimório. Você pode colocá-lo em seu cemitério.)",
+  "s": "Tira uma criatura da mesa e manda para o grimório do dono. É ele quem escolhe se vai para cima (e ele compra de novo no próximo turno) ou para o fundo. Mesmo assim, ele perde a criatura e a mana que gastou nela."
  }
 };
