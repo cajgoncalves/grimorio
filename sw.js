@@ -4,7 +4,7 @@
    - consultas ao Scryfall: rede primeiro, cache como rede de segurança
    - imagens das cartas: cache primeiro (a imagem de uma carta nunca muda)      */
 
-var VERSAO = "v18";
+var VERSAO = "v19";
 var SHELL  = "mtgpt-shell-" + VERSAO;
 var DADOS  = "mtgpt-dados-" + VERSAO;
 var FIGS   = "mtgpt-figuras-" + VERSAO;
@@ -16,6 +16,7 @@ var ESSENCIAIS = [
   "./icon-192.png",
   "./dic/indice.js",
   "./dic/blb.js",
+  "./dic/fdn.js",
   "./icon-512.png"
 ];
 

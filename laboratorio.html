@@ -106,6 +106,7 @@ textarea{width:100%;min-height:9rem;font-family:ui-monospace,Menlo,monospace;fon
     <div>Estado: <span class="estado" id="estado">—</span></div>
     <div>Rodapé: <b id="r-rodape">—</b> <span class="bruto" id="r-rodape-bruto"></span></div>
     <div>Nome: <b id="r-nome">—</b> <span class="bruto" id="r-nome-bruto"></span></div>
+    <div id="linha-arte" hidden>Arte: <b id="r-arte">—</b> <span class="bruto" id="r-arte-bruto"></span></div>
     <div class="aviso" id="r-tempo"></div>
     <div class="recortes"><canvas id="c-nome"></canvas><canvas id="c-rodape"></canvas></div>
     <div class="linha">
@@ -130,6 +131,7 @@ textarea{width:100%;min-height:9rem;font-family:ui-monospace,Menlo,monospace;fon
   <p class="aviso">A imagem da câmera nunca sai do celular: só o texto lido (nome e código da carta) é enviado ao Scryfall, como na busca normal do Grimório.</p>
 </div>
 
+<script src="artes.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js"></script>
 <script>
 (function(){
@@ -160,19 +162,24 @@ async function api(caminho){
    vocês jogam ganham prioridade no empate. */
 var PRIORIDADE=["FDN","J25","FDC"];
 var COLECOES=PRIORIDADE.slice();
+var TAMANHO={FDN:771,J25:779,FDC:319};
 async function carregarColecoes(){
-  var salvo=ler("grimorio.lab.colecoes",null);
-  if(salvo && Date.now()-salvo.em < 7*864e5){ COLECOES=salvo.lista; return; }
+  var salvo=ler("grimorio.lab.colecoes2",null);
+  if(salvo && Date.now()-salvo.em < 7*864e5){ definirColecoes(salvo.lista); return; }
   try{
     var d=await api("/sets");
-    var lista=d.data.filter(function(s){ return !s.digital; }).map(function(s){ return s.code.toUpperCase(); });
-    if(lista.length){ COLECOES=lista; guardar("grimorio.lab.colecoes",{em:Date.now(),lista:lista}); }
+    var lista=d.data.filter(function(s){ return !s.digital; }).map(function(s){ return [s.code.toUpperCase(),s.card_count]; });
+    if(lista.length){ definirColecoes(lista); guardar("grimorio.lab.colecoes2",{em:Date.now(),lista:lista}); }
   }catch(e){}
 }
 
+function definirColecoes(lista){
+  COLECOES=lista.map(function(p){ return p[0]; });
+  lista.forEach(function(p){ TAMANHO[p[0]]=p[1]; });
+}
 /* distância com as confusões típicas do OCR custando menos */
 var PARECIDAS={"OD":.3,"DO":.3,"0O":.2,"O0":.2,"1I":.3,"I1":.3,"5S":.3,"S5":.3,"8B":.3,"B8":.3,
-               "NH":.5,"HN":.5,"UV":.4,"VU":.4,"2Z":.4,"Z2":.4,"0D":.4,"D0":.4,"CG":.5,"GC":.5};
+               "NH":.5,"HN":.5,"OD":.3,"ED":.4,"EF":.4,"FE":.4,"SF":.5,"FS":.5,"CD":.5,"DC":.5,"OC":.4,"CO":.4,"UV":.4,"VU":.4,"2Z":.4,"Z2":.4,"0D":.4,"D0":.4,"CG":.5,"GC":.5};
 function distancia(a,b){
   var m=a.length,n=b.length,d=[],i,j;
   for(i=0;i<=m;i++){ d[i]=[i]; }
@@ -185,32 +192,83 @@ function distancia(a,b){
 }
 var IDIOMAS=["EN","PT","ES","FR","DE","IT","JA","KO","RU","ZH","PH"];
 function lerRodape(txt){
-  var t=String(txt).toUpperCase().replace(/[^A-Z0-9\s]/g," ");
-  /* número: prefere o de 4 dígitos (o rodapé moderno imprime 0227) */
-  var num=null, melhorTam=0;
-  (t.match(/\b[0-9OIS]{1,4}\b/g)||[]).forEach(function(tok){
-    var s=tok.replace(/O/g,"0").replace(/I/g,"1").replace(/S/g,"5");
-    if(!/^\d+$/.test(s) || /^0+$/.test(s)) return;
-    if(!/\d/.test(tok)) return;               // "SOS" sozinho não é número
-    if(s.length>melhorTam){ melhorTam=s.length; num=String(parseInt(s,10)); }
-  });
-  /* coleção: token de 3–6 caracteres, sem o idioma grudado */
+  /* O rodapé moderno tem duas linhas:
+       R 0711
+       FDN • EN  [pincel] NOME DO ILUSTRADOR
+     O código da coleção é o que vem LOGO ANTES do idioma. Procurar em
+     qualquer lugar da linha deixava o nome do ilustrador virar coleção
+     ("MATT" → MAT, "MAGALI" → MAR). O número vem na linha de cima, às
+     vezes grudado na raridade ("M0707").                                */
+  var linhas=String(txt).toUpperCase().split(/\n/)
+    .map(function(l){ return l.replace(/[^A-Z0-9\s]/g," ").replace(/\s+/g," ").trim(); })
+    .filter(Boolean);
+  var achado=null;
+  for(var i=0;i<linhas.length && !achado;i++){
+    var toks=linhas[i].split(" ");
+    for(var k=0;k<toks.length;k++){
+      var t=toks[k], cod=null;
+      if(IDIOMAS.indexOf(t)>=0 && k>0) cod=toks[k-1];
+      else{
+        for(var L=0;L<IDIOMAS.length;L++){
+          var id=IDIOMAS[L];
+          if(t.length>=id.length+2 && t.length<=id.length+5 && t.slice(-id.length)===id){ cod=t.slice(0,-id.length); break; }
+        }
+      }
+      if(!cod) continue;
+      var numero=numeroPerto(linhas,i,toks.slice(0,k).join(" "));
+      var col=casarColecao(cod,numero,false);
+      if(col){ achado={colecao:col,numero:numero&&cabe(col,numero)?numero:null}; break; }
+    }
+  }
+  if(achado) return achado;
+  /* sem o idioma legível: só aceita as coleções de vocês, e o número tem que caber nelas */
+  var todos=linhas.join(" ").split(" "), num=null;
+  for(var n=linhas.length;n>0 && !num;n--) num=numeroPerto(linhas,n,"");
+  for(var j=0;j<todos.length;j++){
+    if(todos[j].length<3 || todos[j].length>4 || /^[0-9]+$/.test(todos[j])) continue;
+    if(IDIOMAS.indexOf(todos[j])>=0) continue;   // "EN" está em toda carta: nunca é coleção
+    var c=casarColecao(todos[j],num,true);
+    if(c) return {colecao:c,numero:num&&cabe(c,num)?num:null};
+  }
+  return {colecao:null,numero:null};
+}
+/* número de colecionador: na linha do código (antes dele) ou nas duas de cima */
+function numeroPerto(linhas,i,antes){
+  var fontes=[antes, linhas[i-1]||"", linhas[i-2]||""];
+  for(var f=0;f<fontes.length;f++){
+    var l=fontes[f].replace(/\b([CURMLSTPB])(?=[0-9O]{3,4}\b)/g,"$1 ");
+    var toks=l.split(" ");
+    for(var k=toks.length-1;k>=0;k--){
+      var t=toks[k];
+      if(!/^[0-9OIS]{3,4}$/.test(t) || !/[0-9]/.test(t)) continue;
+      var d=t.replace(/O/g,"0").replace(/I/g,"1").replace(/S/g,"5");
+      var n=parseInt(d,10);
+      if(n>0) return String(n);
+    }
+  }
+  return null;
+}
+function cabe(col,num){ var n=TAMANHO[col]; return !n || +num<=n+20; }
+function casarColecao(tok,num,soAsNossas){
+  tok=String(tok).replace(/[^A-Z0-9]/g,"");
+  if(tok.length<2 || tok.length>5) return null;
   var melhor=null;
-  (t.match(/\b[A-Z0-9]{3,6}\b/g)||[]).forEach(function(tok){
-    if(/^[0-9OIS]+$/.test(tok) && /\d/.test(tok)) return;
-    var cands=[tok.slice(0,4), tok.slice(0,3)];
-    IDIOMAS.forEach(function(L){ if(tok.length>L.length+2 && tok.slice(-L.length)===L) cands.push(tok.slice(0,-L.length)); });
-    cands.forEach(function(c){
-      COLECOES.forEach(function(s){
-        if(Math.abs(s.length-c.length)>1) return;
-        var dd=distancia(c,s);
-        if(dd>1) return;
-        var peso=dd-(PRIORIDADE.indexOf(s)>=0?.05:0);
-        if(!melhor || peso<melhor.peso) melhor={peso:peso,colecao:s};
-      });
-    });
+  var lista=soAsNossas?PRIORIDADE:COLECOES;
+  lista.forEach(function(s){
+    var nossa=PRIORIDADE.indexOf(s)>=0, dd;
+    if(tok.length===2){
+      if(!nossa) return;                         // "ON" só pode ser pedaço de FDN
+      dd=Math.min(distancia(tok,s.slice(1)),distancia(tok,s.slice(0,2)))+.5;
+    }else{
+      if(Math.abs(s.length-tok.length)>1) return;
+      dd=distancia(tok,s);
+    }
+    if(dd>1.01) return;
+    if(num && !cabe(s,num)) return;              // 717 não cabe numa coleção de 165 cartas
+    var peso=dd-(nossa?.6:0);
+    if(!melhor || peso<melhor.peso) melhor={peso:peso,col:s};
   });
-  return {colecao:melhor&&melhor.colecao, numero:num};
+  return melhor?melhor.col:null;
 }
 /* Índice local dos nomes das coleções que vocês jogam. Um nome lido pela
    metade ("Sate Who lanalis at fate") ainda casa com o certo ("Alesha, Who
@@ -251,26 +309,32 @@ function lev(a,b){
 function casarNomeLocal(lido){
   var q=norm(lido); if(q.replace(/ /g,"").length<4 || !INDICE.length) return null;
   var toks=q.split(" ").filter(function(w){ return w.length>=2; });
+  if(!toks.length) return null;
   var melhor=null, segundo=null;
   INDICE.forEach(function(e){
     var inteiro=1-lev(q,e.n)/Math.max(q.length,e.n.length);
-    var achadas=0;
-    e.palavras.forEach(function(w){
-      var tol=w.length>=7?2:w.length>=4?1:0;
-      for(var k=0;k<toks.length;k++){ if(lev(toks[k],w)<=tol){ achadas++; break; } }
+    /* cada palavra do nome vale pela semelhança com a melhor palavra lida,
+       e palavras compridas pesam mais: "vitality" contra "finality" dá
+       0,75 e não 1 — antes as duas empatavam e nenhuma era aceita */
+    var ws=e.palavras.length?e.palavras:e.n.split(" "), soma=0, peso=0;
+    ws.forEach(function(w){
+      var sim=0;
+      toks.forEach(function(t){ var v=1-lev(t,w)/Math.max(t.length,w.length); if(v>sim) sim=v; });
+      if(sim<.6) sim=0;          // palavra meio parecida não conta: "first" não é meio "sure"
+      soma+=sim*w.length; peso+=w.length;
     });
-    var porPalavra=e.palavras.length ? achadas/e.palavras.length : 0;
-    /* linha bem mais comprida que o nome é frase de regra ou de ambientação
-       que só menciona o nome ("The elves of the Llanowar forest…") */
-    var sobra=toks.length-(e.palavras.length+2);
+    var porPalavra=peso?soma/peso:0;
+    var sobra=toks.length-(e.n.split(" ").length+2);
     if(sobra>0) porPalavra*=Math.max(0,1-sobra*.15);
-    if(e.palavras.length===1 && inteiro<.6) porPalavra*=.6;   // nome de uma palavra só pede leitura mais inteira
-    var nota=Math.max(inteiro, porPalavra*.95);
+    if(ws.length===1 && inteiro<.6) porPalavra*=.8;
+    var nota=Math.max(inteiro,porPalavra*.97);
     if(!melhor || nota>melhor.nota){ segundo=melhor; melhor={nota:nota,e:e}; }
     else if(!segundo || nota>segundo.nota){ segundo={nota:nota,e:e}; }
   });
-  if(!melhor || melhor.nota<.72) return null;
-  if(segundo && melhor.nota-segundo.nota<.08) return null;
+  if(!melhor || melhor.nota<.74) return null;
+  /* nome curto erra fácil ("Angel" → Anger): exige leitura quase exata */
+  if(melhor.e.n.replace(/ /g,"").length<=6 && melhor.nota<.9) return null;
+  if(segundo && melhor.nota-segundo.nota<.06) return null;
   return { name:melhor.e.nome, oracle_id:melhor.e.oracle, parcial:true, nota:+melhor.nota.toFixed(2) };
 }
 
@@ -387,7 +451,7 @@ async function ligarCamera(){
   await video.play().catch(function(){});
   $("ligar").textContent="Desligar a câmera";
   novaTentativa();
-  rodando=true; laco();
+  rodando=true; laco(); lacoArte();
 }
 function desligarCamera(){
   rodando=false;
@@ -426,11 +490,139 @@ function faixa(c,f,exp){
   return {x:x, y:y, w:Math.min(w,c.canvas.width-x), h:Math.min(h,c.canvas.height-y)};
 }
 
-function novaTentativa(){ votos=[]; inicioTentativa=Date.now(); quadrosTentativa=0; pausado=false; $("molde").className="molde"; }
+/* ================= reconhecimento pela ARTE (caminho rápido) ================= */
+/* Como os apps de loja fazem: em vez de ler letras, compara o desenho da
+   carta com a "impressão digital" das ~1.700 artes de FDN, J25 e FDC,
+   guardada em artes.js (~100 KB). Leva poucos milissegundos por quadro e
+   não depende de foco nítido nas letras. O leitor de texto continua
+   rodando por trás: confirma a arte e cobre cartas de outras coleções. */
+/* Impressão digital da arte — MESMO código no laboratório e no gerador do índice.
+   A arte (não a moldura) é o que distingue as cartas. Reduz a arte a 32x32 tons
+   de cinza, passa uma DCT e guarda o sinal (acima/abaixo da mediana) das 16x16
+   frequências mais baixas: 256 bits. Brilho, contraste e um pouco de desfoque
+   quase não mudam esses bits; outra arte muda metade deles. */
+var ARTE={x:.10,y:.125,w:.80,h:.41};
+var _dctC=null;
+function _cos(){
+  if(_dctC) return _dctC; _dctC=new Float32Array(32*32);
+  for(var u=0;u<32;u++) for(var x=0;x<32;x++) _dctC[u*32+x]=Math.cos((2*x+1)*u*Math.PI/64);
+  return _dctC;
+}
+var _cv=[];
+function _tela(i,w,h){ var c=_cv[i]||(_cv[i]=document.createElement("canvas")); if(c.width!==w)c.width=w; if(c.height!==h)c.height=h; return c; }
+/* fonte: imagem/canvas; r: retângulo da CARTA inteira dentro da fonte */
+function impressao(fonte, r){
+  var ax=r.x+r.w*ARTE.x, ay=r.y+r.h*ARTE.y, aw=r.w*ARTE.w, ah=r.h*ARTE.h;
+  /* reduz em etapas de metade: o Safari reduz de uma vez sem suavizar e serrilha */
+  var w=aw, h=ah, src=fonte, sx=ax, sy=ay, i=0;
+  while(w>64){
+    var nw=Math.max(32,Math.round(w/2)), nh=Math.max(32,Math.round(h/2)), c=_tela(i++,nw,nh), g=c.getContext("2d");
+    g.imageSmoothingEnabled=true; g.imageSmoothingQuality="high";
+    g.drawImage(src,sx,sy,w,h,0,0,nw,nh); src=c; sx=0; sy=0; w=nw; h=nh;
+  }
+  var f=_tela(9,32,32), gf=f.getContext("2d",{willReadFrequently:true});
+  gf.imageSmoothingEnabled=true; gf.imageSmoothingQuality="high";
+  gf.drawImage(src,sx,sy,w,h,0,0,32,32);
+  var d=gf.getImageData(0,0,32,32).data, p=new Float32Array(1024);
+  for(var k=0;k<1024;k++) p[k]=.299*d[k*4]+.587*d[k*4+1]+.114*d[k*4+2];
+  var C=_cos(), t=new Float32Array(16*32), q=new Float32Array(256), u, v, x, y, s;
+  for(u=0;u<16;u++) for(y=0;y<32;y++){ s=0; for(x=0;x<32;x++) s+=C[u*32+x]*p[y*32+x]; t[u*32+y]=s; }
+  for(v=0;v<16;v++) for(u=0;u<16;u++){ s=0; for(y=0;y<32;y++) s+=C[v*32+y]*t[u*32+y]; q[v*16+u]=s; }
+  var arr=Array.prototype.slice.call(q,1).sort(function(a,b){return a-b;}), med=(arr[127]+arr[128])/2;
+  var h32=new Uint32Array(8);
+  for(k=1;k<256;k++) if(q[k]>med) h32[k>>5]|=(1<<(k&31))>>>0;
+  return h32;
+}
+function _pop(n){ n=n-((n>>>1)&0x55555555); n=(n&0x33333333)+((n>>>2)&0x33333333); return (((n+(n>>>4))&0x0F0F0F0F)*0x01010101)>>>24; }
+function distanciaArte(a,base,j){ var s=0; for(var k=0;k<8;k++) s+=_pop((a[k]^base[j*8+k])>>>0); return s; }
+
+var BASE_ARTE=null, CARTAS_ARTE=[];
+function prepararArtes(){
+  var A=window.ARTES; if(!A||!A.h) return false;
+  var bin=atob(A.h), bytes=new Uint8Array(bin.length);
+  for(var i=0;i<bin.length;i++) bytes[i]=bin.charCodeAt(i);
+  BASE_ARTE=new Uint32Array(bytes.buffer);
+  CARTAS_ARTE=A.cartas.split("\n").map(function(l){ var p=l.split("|"); return {set:p[0],num:p[1],nome:p[2],o:p[3]}; });
+  return CARTAS_ARTE.length*8===BASE_ARTE.length;
+}
+/* Tenta alguns enquadramentos (carta um pouco menor que o molde, um pouco
+   deslocada) e fica com o que mais se parece com alguma arte. */
+var VARIANTES_ARTE=(function(){ var v=[]; [1,.93,.86].forEach(function(s){ [-.03,0,.03].forEach(function(dx){ [-.025,0,.025].forEach(function(dy){ v.push({s:s,dx:dx,dy:dy}); }); }); }); return v; })();
+function porArte(fonte, r0){
+  if(!BASE_ARTE) return null;
+  var n=CARTAS_ARTE.length, melhor={d:999,j:-1}, porOracle={};
+  for(var k=0;k<VARIANTES_ARTE.length;k++){
+    var v=VARIANTES_ARTE[k], w=r0.w*v.s, h=r0.h*v.s;
+    var r={x:r0.x+(r0.w-w)/2+r0.w*v.dx, y:r0.y+(r0.h-h)/2+r0.h*v.dy, w:w, h:h};
+    var hh=impressao(fonte,r);
+    for(var j=0;j<n;j++){
+      var d=distanciaArte(hh,BASE_ARTE,j), o=CARTAS_ARTE[j].o;
+      if(porOracle[o]===undefined || d<porOracle[o].d) porOracle[o]={d:d,j:j};
+    }
+  }
+  var lista=Object.keys(porOracle).map(function(o){ return porOracle[o]; }).sort(function(a,b){ return a.d-b.d; });
+  var a=lista[0], b=lista[1]||{d:256};
+  return {j:a.j, carta:CARTAS_ARTE[a.j], d:a.d, folga:b.d-a.d, segunda:CARTAS_ARTE[b.j]||null};
+}
+
+function novaTentativa(){ votos=[]; votosArte=[]; inicioTentativa=Date.now(); quadrosTentativa=0; pausado=false; $("molde").className="molde"; }
+
+/* Limites da distância entre impressões (0 a 256 bits). Calibrados com as
+   1.869 artes e 320 cartas de OUTRAS coleções fotografadas em simulação:
+   a carta certa fica em ~48 (fácil) a ~54 (difícil); carta que não está no
+   índice nunca ficou abaixo de 84, nem com folga acima de 10. Os limites
+   abaixo deixam ~20 bits de margem para a câmera real ser pior. */
+var ARTE_CERTA=62, ARTE_FOLGA_CERTA=26, ARTE_BOA=72, ARTE_FOLGA=16;
+var votosArte=[], quadroArte=document.createElement("canvas"), buscandoArte=false;
+async function lacoArte(){
+  while(rodando){
+    if(pausado || !video.videoWidth || !BASE_ARTE){ await esperar(200); continue; }
+    try{ await lerArte(); }catch(e){ console.warn(e); }
+    await esperar(90);
+  }
+}
+async function lerArte(){
+  var t0=performance.now(), m=retanguloDoMolde(), pad=.06;
+  var esc=Math.min(1,420/m.w);
+  quadroArte.width=Math.round(m.w*(1+2*pad)*esc); quadroArte.height=Math.round(m.h*(1+2*pad)*esc);
+  quadroArte.getContext("2d").drawImage(video, m.x-m.w*pad, m.y-m.h*pad, m.w*(1+2*pad), m.h*(1+2*pad), 0,0, quadroArte.width, quadroArte.height);
+  var r={x:m.w*pad*esc, y:m.h*pad*esc, w:m.w*esc, h:m.h*esc};
+  var res=porArte(quadroArte,r); if(!res) return;
+  res.ms=Math.round(performance.now()-t0);
+  $("linha-arte").hidden=false;
+  $("r-arte").textContent=res.carta.nome+" ("+res.carta.set.toUpperCase()+" "+res.carta.num+")";
+  $("r-arte-bruto").textContent="distância "+res.d+", folga "+res.folga+" · "+res.ms+" ms";
+  votosArte.push(res); votosArte=votosArte.slice(-4);
+  if(ultimaLeitura) ultimaLeitura.arte={carta:res.carta.nome, d:res.d, folga:res.folga};
+  var dec=julgarArte(votosArte, votos);
+  if(dec && !pausado){
+    pausado=true;
+    var c=null;
+    try{ c=await api("/cards/"+dec.carta.set+"/"+encodeURIComponent(dec.carta.num)); }catch(e){}
+    if(!c || c.object!=="card") c={name:dec.carta.nome, set:dec.carta.set, collector_number:dec.carta.num, parcial:true};
+    await achou({carta:c, via:dec.via});
+  }
+}
+/* Quando a arte basta:
+   1. um quadro com distância muito baixa e nenhuma outra arte por perto;
+   2. dois quadros seguidos apontando a mesma carta, com folga;
+   3. um quadro razoável + o texto (nome ou rodapé) apontando a mesma carta. */
+function julgarArte(va, vt){
+  var u=va[va.length-1], p=va[va.length-2];
+  if(!u) return null;
+  if(u.d<=ARTE_CERTA && u.folga>=ARTE_FOLGA_CERTA) return {carta:u.carta, via:"pela arte"};
+  if(p && p.carta.o===u.carta.o && u.d<=ARTE_BOA && p.d<=ARTE_BOA && u.folga>=ARTE_FOLGA && p.folga>=ARTE_FOLGA)
+    return {carta:u.carta, via:"pela arte (2 quadros)"};
+  if(u.d<=ARTE_BOA+6 && u.folga>=12){
+    var bate=(vt||[]).slice(-3).some(function(v){ return (v.a && v.a.slice(0,8)===u.carta.o) || (v.b && v.b.slice(0,8)===u.carta.o); });
+    if(bate) return {carta:u.carta, via:"arte e texto concordam"};
+  }
+  return null;
+}
 
 async function laco(){
   while(rodando){
-    if(pausado || !video.videoWidth){ await esperar(200); continue; }
+    if(pausado || !video.videoWidth || !leitor){ await esperar(200); continue; }
     try{ await lerQuadro(); }catch(e){ console.warn(e); }
     await esperar(150);
   }
@@ -466,36 +658,57 @@ async function lerQuadro(){
                  cartaRodape:a&&a.name, cartaNome:b&&b.name, ms:Math.round(performance.now()-t0)};
   mostrarLeitura(ultimaLeitura);
 
-  if(carta1 && peso>0) votos.push({id:carta1.oracle_id, peso:peso, carta:(a||carta1), via:via});
-  votos=votos.slice(-6);
+  votos.push({ a:a&&a.oracle_id, b:b&&b.oracle_id, cartaA:a, cartaB:b,
+               nota:b?(b.nota||.85):0, em:Date.now() });
+  votos=votos.slice(-8);
   decidir();
 }
 
-/* Aceita quando: (a) as duas leituras concordaram pelo menos uma vez e mais
-   um quadro concorda; ou (b) três quadros concordam sem conflito. */
+/* Quando aceitar uma carta:
+   1. nome e rodapé apontam a MESMA carta no mesmo quadro → na hora. Duas
+      leituras independentes errarem juntas para a mesma carta é quase
+      impossível.
+   2. só o nome, repetido: 2 quadros se o nome saiu quase inteiro (nota
+      ≥ 0,9), 3 se saiu pela metade.
+   3. só o rodapé, repetido 3 vezes — e nunca se algum quadro recente leu
+      um nome que aponta outra carta. O rodapé é a leitura que pode sair
+      "certa" e errada ao mesmo tempo: o iPhone leu 0712 como "0072", e a
+      carta 72 existe.
+   Em qualquer caso, uma carta que brigou com outra no mesmo quadro fica
+   bloqueada enquanto a briga estiver na janela. */
 function decidir(){
-  /* Aceita quando: as duas leituras concordaram num quadro e mais um quadro
-     confirma; ou 3 quadros só pelo nome; ou 4 só pelo rodapé (o número é a
-     leitura que pode sair "certa" e errada ao mesmo tempo: 0227 → 0237). */
-  var soma={}, conf={}, soNome={}, soRod={}, ultima={}, comImpressao={};
+  if(pausado) return;
+  var d=julgar(votos);
+  if(d.aceita){ achou({carta:d.carta, via:d.via}); return; }
+  var e=$("estado");
+  if(d.estado==="divergente"){ e.textContent="leituras divergentes, segure firme"; e.className="estado warn"; }
+  else if(d.estado==="quase"){ e.textContent="quase lá"; e.className="estado warn"; }
+  else { e.textContent="procurando…"; e.className="estado"; }
+}
+function julgar(votos){
+  var bloqueada={}, porNome={}, porRod={}, notaMax={}, carta={};
   votos.forEach(function(v){
-    soma[v.id]=(soma[v.id]||0)+1; ultima[v.id]=v;
-    if(v.peso===2) conf[v.id]=1;
-    if(v.via==="só o nome") soNome[v.id]=(soNome[v.id]||0)+1;
-    if(v.via==="só o rodapé") soRod[v.id]=(soRod[v.id]||0)+1;
-    if(v.carta && !v.carta.parcial) comImpressao[v.id]=v.carta;
+    if(v.a && v.b && v.a!==v.b){ bloqueada[v.a]=1; bloqueada[v.b]=1; }
+    if(v.a){ carta[v.a]=v.cartaA; }
+    if(v.b && !carta[v.b]) carta[v.b]=v.cartaB;
   });
-  var ids=Object.keys(soma);
-  if(ids.length>1){ $("estado").textContent="leituras divergentes, segure firme"; $("estado").className="estado warn"; }
-  for(var i=0;i<ids.length;i++){
-    var id=ids[i];
-    if((conf[id] && soma[id]>=2) || (soNome[id]||0)>=3 || (soRod[id]||0)>=4 || soma[id]>=4){
-      var v=ultima[id]; if(comImpressao[id]) v={carta:comImpressao[id],via:v.via,id:id};
-      achou(v); return;
-    }
+  var ultimo=votos[votos.length-1];
+  if(ultimo && ultimo.a && ultimo.a===ultimo.b)
+    return {aceita:true, carta:ultimo.cartaA, via:"as duas leituras concordam"};
+  votos.forEach(function(v){
+    if(v.b && !(v.a && v.a!==v.b)){ porNome[v.b]=(porNome[v.b]||0)+1; notaMax[v.b]=Math.max(notaMax[v.b]||0,v.nota); }
+    if(v.a && !v.b) porRod[v.a]=(porRod[v.a]||0)+1;
+  });
+  var ids=Object.keys(carta), i, id;
+  for(i=0;i<ids.length;i++){
+    id=ids[i]; if(bloqueada[id]) continue;
+    var n=porNome[id]||0, r=porRod[id]||0;
+    var outroNome=Object.keys(porNome).some(function(x){ return x!==id; });
+    if(n>=3 || (n>=2 && notaMax[id]>=.9) || (n>=1 && r>=1))
+      return {aceita:true, carta:carta[id], via:(r?"nome e rodapé em quadros diferentes":"só o nome")};
+    if(r>=3 && !outroNome) return {aceita:true, carta:carta[id], via:"só o rodapé"};
   }
-  if(ids.length===1){ $("estado").textContent="quase lá"; $("estado").className="estado warn"; }
-  else if(!ids.length){ $("estado").textContent="procurando…"; $("estado").className="estado"; }
+  return {aceita:false, estado:Object.keys(bloqueada).length?"divergente":ids.length?"quase":"procurando"};
 }
 
 function mostrarLeitura(l){
@@ -634,6 +847,7 @@ $("zerar").addEventListener("click",function(){
 document.addEventListener("visibilitychange",function(){ if(document.hidden && rodando) desligarCamera(); });
 
 desenharRegistro();
+if(prepararArtes()){ $("ligar").disabled=false; }
 if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){
   $("ligar").hidden=true;
 }
@@ -644,7 +858,7 @@ if(typeof Tesseract==="undefined"){
     alertar("O leitor de texto não carregou ("+(e&&e.message||e)+"). Recarregue a página.");
   });
 }
-window.__lab={ lerRodape:lerRodape, limparNome:limparNome, casarNomeLocal:casarNomeLocal, indice:function(){ return INDICE.length; }, registro:function(){ return registro; }, votos:function(){ return votos; } };
+window.__lab={ definirColecoes:definirColecoes, julgar:julgar, definirIndice:function(l){ INDICE=prepararIndice(l); }, lerRodape:lerRodape, limparNome:limparNome, casarNomeLocal:casarNomeLocal, indice:function(){ return INDICE.length; }, registro:function(){ return registro; }, votos:function(){ return votos; }, porArte:porArte, impressao:impressao, julgarArte:julgarArte, artes:function(){ return CARTAS_ARTE.length; } };
 })();
 </script>
 </body>
