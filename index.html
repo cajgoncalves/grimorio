@@ -3370,21 +3370,37 @@ var btnScan=document.getElementById("escanear");
 var painelScan=document.getElementById("scan");
 var scanEstado=document.getElementById("scan-estado");
 var scanDica=document.getElementById("scan-dica");
-var scanSessao=null, scanAtivo=false, scanScript=null;
+var scanSessao=null, scanAtivo=false, scanScripts={};
 
-function carregarMotorScan(){
-  if(window.Scanner) return Promise.resolve();
-  if(!scanScript){
-    scanScript=new Promise(function(ok,erro){
+/* Baixa um script uma vez só. O scanner.js e o artes.js começam a baixar ao
+   mesmo tempo, enquanto o iPhone ainda mostra o pedido de permissão da câmera. */
+function carregarScriptScan(url){
+  if(!scanScripts[url]){
+    scanScripts[url]=new Promise(function(ok,erro){
       var s=document.createElement("script");
-      s.src="scanner.js"; s.async=true;
+      s.src=url; s.async=true;
       s.onload=function(){ ok(); };
-      s.onerror=function(){ scanScript=null; erro(new Error("scanner.js não carregou")); };
+      s.onerror=function(){ delete scanScripts[url]; erro(new Error(url+" não carregou")); };
       document.head.appendChild(s);
     });
   }
-  return scanScript;
+  return scanScripts[url];
 }
+function carregarMotorScan(){
+  if(window.Scanner) return Promise.resolve();
+  return carregarScriptScan("scanner.js");
+}
+
+/* Com a abertura do app terminada e o celular parado, deixa o scanner.js e o
+   artes.js (uns 175 KB) já guardados no aparelho: o toque em Escanear fica
+   mais rápido. O Tesseract (vários MB) continua só sob demanda. Não faz nada
+   no modo "economizar dados". */
+setTimeout(function(){
+  var c=navigator.connection;
+  if(c && c.saveData) return;
+  if(!navigator.onLine) return;
+  ["scanner.js","artes.js"].forEach(function(u){ fetch(u).catch(function(){}); });
+},4000);
 function pararScan(){
   /* fecha a câmera e esconde o painel (também ao trocar de aba ou sair do app) */
   var estavaAberto=scanAtivo;
@@ -3403,10 +3419,12 @@ async function abrirScan(){
   /* No iPhone, a câmera tem que ser pedida logo no toque, antes de baixar
      qualquer coisa. Por isso o pedido sai aqui, e o motor é carregado depois. */
   var pedido=navigator.mediaDevices.getUserMedia({audio:false,video:{facingMode:{ideal:"environment"},width:{ideal:1920},height:{ideal:1920}}});
+  var motor=carregarMotorScan(), artes=window.ARTES ? Promise.resolve() : carregarScriptScan("artes.js");
+  motor.catch(function(){}); artes.catch(function(){});   // quem espera trata o erro; aqui só evita aviso solto
   var fluxo;
   try{
     fluxo=await pedido;
-    await carregarMotorScan();
+    await motor;
   }catch(e){
     if(fluxo) fluxo.getTracks().forEach(function(t){ t.stop(); });
     var semPermissao=e && (e.name==="NotAllowedError"||e.name==="SecurityError");
@@ -3420,10 +3438,11 @@ async function abrirScan(){
   }
   if(!scanAtivo){ fluxo.getTracks().forEach(function(t){ t.stop(); }); return; }   // fechou enquanto abria
 
-  Scanner.config({api:api, prefixo:"mtgpt.scan."});
+  Scanner.config({api:api, prefixo:"mtgpt.scan.", carregar:carregarScriptScan});
   if(!scanSessao){
     scanSessao=Scanner.sessao({
       video:document.getElementById("scan-video"), molde:document.getElementById("scan-molde"),
+      semBuscar:true,   // só o nome importa: a busca normal traz o resto
       aoAchar:function(v){
         var nome=v.carta && v.carta.name;
         pararScan();
@@ -4002,7 +4021,7 @@ window.addEventListener("appinstalled",function(){ barraInst.hidden=true; });
 /* Carimbo de versão: serve para saber, olhando a tela, qual versão está
    rodando — e se o tradutor carregou ou não. Uma fonte só para o número:
    o carimbo e o "número de coleção" dos créditos saem os dois daqui. */
-var VERSAO_APP = 21;
+var VERSAO_APP = 22;
 (function(){
   var c=document.getElementById("carimbo");
   var col=document.getElementById("colecao");

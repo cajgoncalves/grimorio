@@ -21,7 +21,7 @@
 "use strict";
 
 /* ================= utilidades ================= */
-var cfg={ api:null, prefixo:"grimorio.scan." };
+var cfg={ api:null, prefixo:"grimorio.scan.", carregar:null };
 function esperar(ms){ return new Promise(function(r){ setTimeout(r,ms); }); }
 function norm(s){ return String(s||"").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/[^a-z0-9 ]/g," ").replace(/\s+/g," ").trim(); }
 function ler(k,d){ try{ var v=localStorage.getItem(cfg.prefixo+k); return v?JSON.parse(v):d; }catch(e){ return d; } }
@@ -48,6 +48,7 @@ async function api(caminho){
 var URL_TESSERACT="https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js";
 var _scripts={};
 function carregarScript(url){
+  if(cfg.carregar) return cfg.carregar(url);   /* a página pode ter começado o download antes */
   if(_scripts[url]) return _scripts[url];
   _scripts[url]=new Promise(function(ok,erro){
     var s=document.createElement("script");
@@ -537,6 +538,8 @@ function faixa(c,f,exp){
    Opções:
      video, molde          elementos da página (o molde é o retângulo da carta)
      canvasNome, canvasRodape   (opcionais) onde mostrar os recortes lidos
+     semBuscar             true: quando a arte reconhece, entrega só {name, set,
+                           collector_number, parcial:true}, sem consultar o Scryfall
      aoAchar(v)            carta aceita (pode devolver uma Promise)
      aoLer(l)              uma leitura de texto terminou (para telas de teste)
      aoArte(res)           uma leitura de arte terminou
@@ -609,7 +612,8 @@ function sessao(o){
       est.pausado=true;
       marcarMolde("achou");
       var c=null;
-      try{ c=await api("/cards/"+dec.carta.set+"/"+encodeURIComponent(dec.carta.num)); }catch(e){}
+      /* semBuscar: a página só precisa do nome (o app); pula a ida ao Scryfall */
+      if(!o.semBuscar){ try{ c=await api("/cards/"+dec.carta.set+"/"+encodeURIComponent(dec.carta.num)); }catch(e){} }
       if(!c || c.object!=="card") c={name:dec.carta.nome, set:dec.carta.set, collector_number:dec.carta.num, parcial:true};
       await cb("aoAchar",{carta:c, via:dec.via});
     }
@@ -685,7 +689,11 @@ async function carregarTudo(url){
       prepararArtes();
     }
   })();
+  /* O leitor de texto (Tesseract) é pesado de iniciar. Só começa depois que a
+     arte está pronta: assim o celular não divide o esforço entre os dois
+     justo no momento em que a arte tenta reconhecer a carta. */
   var texto=(async function(){
+    await artes.then(null,function(){});
     await prepararLeitor();
     await carregarColecoes();
     await carregarIndice();
@@ -699,7 +707,7 @@ async function carregarTudo(url){
 
 window.Scanner={
   pedidoCamera:PEDIDO_CAMERA,
-  config:function(c){ if(c){ if(c.api) cfg.api=c.api; if(c.prefixo) cfg.prefixo=c.prefixo; } },
+  config:function(c){ if(c){ if(c.api) cfg.api=c.api; if(c.prefixo) cfg.prefixo=c.prefixo; if(c.carregar) cfg.carregar=c.carregar; } },
   sessao:sessao, carregarTudo:carregarTudo, carregarScript:carregarScript,
   prepararLeitor:prepararLeitor, prepararArtes:prepararArtes, carregarColecoes:carregarColecoes, carregarIndice:carregarIndice,
   ocr:ocr, tratar:tratar, rodapeEstrito:rodapeEstrito, porRodape:porRodape, porNome:porNome, cartaCompleta:cartaCompleta,
