@@ -8,7 +8,8 @@
      s = explicação em português do dia a dia
 
    Lote 1: cartas 730–771. Lote 2: cartas 700–729.
-   Lote 3: cartas brancas novas 1–28. Lote 4: azuis novas 29–53. */
+   Lote 3: cartas brancas novas 1–28. Lote 4: azuis novas 29–53.
+   Lote 5: pretas novas 54–77. */
 
 window.DICIONARIO = window.DICIONARIO || {};
 window.DICIONARIO.fdn = {
@@ -605,5 +606,145 @@ window.DICIONARIO.fdn = {
   "t": "Mágica Instantânea",
   "x": "O dono da criatura alvo a coloca no topo ou no fundo do grimório dele, à escolha dele.\nUse vigiar 1. (Olhe o card do topo de seu grimório. Você pode colocá-lo em seu cemitério.)",
   "s": "Tira uma criatura da mesa e manda para o grimório do dono. É ele quem escolhe se vai para cima (e ele compra de novo no próximo turno) ou para o fundo. Mesmo assim, ele perde a criatura e a mana que gastou nela."
+ },
+
+ /* ---------------- lote 5: pretas novas 54–77 ---------------- */
+ "68cc5065-0514-4adf-885f-da554e1db00a": {
+  "n": "Abyssal Harvester",
+  "t": "Criatura — Demônio Bruxo",
+  "x": "{T}: Exile o card de criatura alvo de um cemitério que tenha sido colocado lá neste turno. Crie uma ficha que seja uma cópia dele, exceto por ser um Pesadelo além de seus outros tipos. Depois, exile todas as outras fichas de Pesadelo que você controla.",
+  "s": "Depois que uma criatura morre (a sua ou a do oponente), você vira o Harvester para tirar essa criatura do cemitério e ganhar uma cópia dela. Só vale para criatura que foi para o cemitério neste mesmo turno. Você só mantém uma cópia por vez: a nova faz a antiga sair. Como usa {T}, não funciona no turno em que ele entra (enjoo de invocação)."
+ },
+ "540693f3-985c-4a4a-945c-c957c5aad395": {
+  "n": "Arbiter of Woe",
+  "t": "Criatura — Demônio",
+  "x": "Como custo adicional para conjurar esta mágica, sacrifique uma criatura.\nVoar\nQuando esta criatura entrar no campo de batalha, cada oponente descarta um card e perde 2 pontos de vida. Você compra um card e ganha 2 pontos de vida.",
+  "s": "Para conjurar, você precisa sacrificar outra criatura sua, então tenha uma na mesa. Vale sacrificar uma ficha ou uma criatura que ia morrer de qualquer jeito. Em troca vem um 5/4 que voa e, ao entrar, tira uma carta e 2 de vida do oponente e dá uma carta e 2 de vida para você."
+ },
+ "ce45d6bd-74e3-401b-983d-028d3fb942da": {
+  "n": "Billowing Shriekmass",
+  "t": "Criatura — Espírito",
+  "x": "Voar\nQuando esta criatura entrar no campo de batalha, triture três cards. (Coloque os três cards do topo de seu grimório em seu cemitério.)\nLimiar — Esta criatura recebe +2/+1 enquanto houver sete ou mais cards em seu cemitério.",
+  "s": "Ao entrar, ela joga as 3 primeiras cartas do SEU grimório no seu cemitério. Isso ajuda a chegar às 7 cartas no cemitério, e aí ela vira uma 4/4 que voa. Antes disso é só uma 2/3 que voa."
+ },
+ "6cf50e21-0f60-4e9a-b910-ebe1bad2a29e": {
+  "n": "Blasphemous Edict",
+  "t": "Feitiço",
+  "x": "Você pode pagar {B} em vez de pagar o custo de mana desta mágica se houver treze ou mais criaturas no campo de batalha.\nCada jogador sacrifica treze criaturas à escolha dele.",
+  "s": "Na prática é uma limpa-mesa: quem tem menos de 13 criaturas sacrifica todas as que tiver. Custa 5 manas, mas só {B} se houver 13 ou mais criaturas somando as duas mesas. Cuidado: ela tira as SUAS criaturas também."
+ },
+ "fd505c02-c59e-476d-8e88-35da862ddc23": {
+  "n": "Bloodthirsty Conqueror",
+  "t": "Criatura — Vampiro Cavaleiro",
+  "x": "Voar, toque mortífero\nToda vez que um oponente perder pontos de vida, você ganha essa mesma quantidade de pontos de vida. (O dano causa perda de pontos de vida.)",
+  "s": "Um 5/5 que voa e destrói qualquer criatura que ela machuque. Sempre que o oponente perde vida, por dano ou por efeito de carta, você ganha o mesmo tanto. Combina com Arbiter of Woe, Sanguine Syphoner e Vengeful Bloodwitch, que fazem o oponente perder vida."
+ },
+ "4c22257e-8a00-40b7-a29b-55fcec7ddbd4": {
+  "n": "Crypt Feaster",
+  "t": "Criatura — Zumbi",
+  "x": "Ameaçar (Esta criatura não pode ser bloqueada, exceto por duas ou mais criaturas.)\nLimiar — Toda vez que esta criatura atacar, se houver sete ou mais cards em seu cemitério, esta criatura recebe +2/+0 até o final do turno.",
+  "s": "Uma 3/4 difícil de bloquear, porque o oponente precisa de duas criaturas. Com 7 cartas ou mais no seu cemitério ela ataca como uma 5/4. A conta é feita na hora do ataque."
+ },
+ "31265357-5ecb-4d83-80ff-1795b1dfdecb": {
+  "n": "Gutless Plunderer",
+  "t": "Criatura — Esqueleto Pirata",
+  "x": "Toque mortífero (Qualquer quantidade de dano que esta criatura causar a uma criatura é suficiente para destruí-la.)\nRaide — Quando esta criatura entrar no campo de batalha, se você atacou neste turno, olhe os três cards do topo de seu grimório. Você pode colocar um desses cards de volta no topo de seu grimório. Coloque o restante em seu cemitério.",
+  "s": "Uma 2/2 barata que destrói qualquer criatura com quem trocar dano, ótima para defender. Se você atacou antes, ela ainda deixa escolher qual das 3 cartas de cima você mantém; as outras vão para o cemitério. Dica: ataque primeiro e baixe ela depois do combate."
+ },
+ "0dc158ba-7ec8-4558-91f5-0a87ef8380d4": {
+  "n": "High-Society Hunter",
+  "t": "Criatura — Vampiro Nobre",
+  "x": "Voar\nToda vez que esta criatura atacar, você pode sacrificar outra criatura. Se fizer isso, coloque um marcador +1/+1 nesta criatura.\nToda vez que outra criatura não ficha morrer, compre um card.",
+  "s": "Um 5/3 que voa. Toda vez que qualquer outra criatura (que não seja ficha) morre, sua ou do oponente, você compra uma carta. Ao atacar você pode sacrificar outra criatura para ela crescer, e a criatura sacrificada também te dá carta, se não for ficha."
+ },
+ "4a7a55a3-568c-4c31-9460-5b94dc0121d8": {
+  "n": "Hungry Ghoul",
+  "t": "Criatura — Zumbi",
+  "x": "{1}, sacrifique outra criatura: Coloque um marcador +1/+1 nesta criatura.",
+  "s": "Paga {1} e sacrifica outra criatura sua para crescer +1/+1, quantas vezes quiser. Boa para aproveitar uma criatura que ia morrer, ou fichas. Dica: quando o oponente tentar matar uma criatura sua, sacrifique ela em resposta e aproveite para crescer."
+ },
+ "0e13c283-f462-441f-a8a5-0c75a59ff1d9": {
+  "n": "Infernal Vessel",
+  "t": "Criatura — Humano Clérigo",
+  "x": "Quando esta criatura morrer, se ela não era um Demônio, devolva-a ao campo de batalha sob o controle de seu dono com dois marcadores +1/+1 sobre ela. Ela é um Demônio além de seus outros tipos.",
+  "s": "Quando morre, volta uma vez, mais forte: uma 4/3 Demônio. Como já será um Demônio, se morrer de novo não volta. Se ela for exilada em vez de morrer, também não volta."
+ },
+ "d398dca3-f3a5-44c9-998f-b4fce9e5c2bf": {
+  "n": "Infestation Sage",
+  "t": "Criatura — Elfo Bruxo",
+  "x": "Quando esta criatura morrer, crie uma ficha de criatura Inseto preta e verde 1/1 com voar.",
+  "s": "Custa só {B} e, quando morre, deixa um Inseto 1/1 que voa. Ótima para ser sacrificada por Hungry Ghoul, Arbiter of Woe ou Vampire Gourmand, porque ela já se paga."
+ },
+ "3ddcaee9-a11e-477a-bd19-f5ee10512549": {
+  "n": "Midnight Snack",
+  "t": "Encantamento",
+  "x": "Raide — No início de sua etapa final, se você atacou neste turno, crie uma ficha de Comida. (Ela é um artefato com \"{2}, {T}, sacrifique este artefato: Você ganha 3 pontos de vida.\")\n{2}{B}, sacrifique este encantamento: O oponente alvo perde X pontos de vida, sendo X a quantidade de pontos de vida que você ganhou neste turno.",
+  "s": "Todo turno em que você ataca, ganha uma ficha de Comida no fim do turno. Mais tarde, gaste {2}{B} para sacrificar o encantamento: o oponente perde tantos pontos de vida quanto você ganhou neste turno. Dica: coma uma Comida (ganha 3 de vida) e use a habilidade no mesmo turno, para o oponente perder pelo menos 3."
+ },
+ "5049da27-f38b-4fe6-a387-51510bd1f44e": {
+  "n": "Nine-Lives Familiar",
+  "t": "Criatura — Felino",
+  "x": "Esta criatura entra no campo de batalha com oito marcadores de ressurgimento sobre ela se você a conjurou.\nQuando esta criatura morrer, se ela tinha um marcador de ressurgimento, devolva-a ao campo de batalha com um marcador de ressurgimento a menos sobre ela no início da próxima etapa final.",
+  "s": "Um gatinho 1/1 que volta da morte até 8 vezes. Cada vez que morre, volta no início da próxima etapa final, com um marcador a menos. Quando não sobra nenhum, a morte é definitiva. Só começa com os 8 marcadores se você a conjurou (se ela entrar de outro jeito, vem sem nenhum). Exilar é o jeito de se livrar dela de vez. Ótima para ser sacrificada."
+ },
+ "29e3a3d9-4839-44d0-ad48-159c01645a6a": {
+  "n": "Revenge of the Rats",
+  "t": "Feitiço",
+  "x": "Crie uma ficha de criatura Rato preta 1/1 virada para cada card de criatura em seu cemitério.\nRecapitular {2}{B}{B} (Você pode conjurar este card de seu cemitério pagando seu custo de recapitular. Depois, exile-o.)",
+  "s": "Conte as criaturas no SEU cemitério: cada uma vira um Rato 1/1, que entra virado (e por isso não bloqueia no turno do oponente). Depois de usar, ela fica no cemitério e pode ser conjurada de novo uma vez com Recapitular, e aí é exilada. Quanto mais criaturas mortas, melhor."
+ },
+ "b81a748b-f7a6-4ec4-8b18-40a1819745f6": {
+  "n": "Sanguine Syphoner",
+  "t": "Criatura — Vampiro Bruxo",
+  "x": "Toda vez que esta criatura atacar, cada oponente perde 1 ponto de vida e você ganha 1 ponto de vida.",
+  "s": "Toda vez que ela ataca, o oponente perde 1 de vida e você ganha 1, mesmo que ela seja bloqueada. Com 1/3 aguenta bem pancada, e com Bloodthirsty Conqueror o efeito dobra."
+ },
+ "223794f2-67a3-4ab5-81c5-046c63307c6c": {
+  "n": "Seeker's Folly",
+  "t": "Feitiço",
+  "x": "Escolha um —\n• O oponente alvo descarta dois cards.\n• As criaturas que seus oponentes controlam recebem -1/-1 até o final do turno.",
+  "s": "Você escolhe um dos dois efeitos. O primeiro faz o oponente descartar duas cartas da mão (ele é quem escolhe quais). O segundo dá -1/-1 em todas as criaturas dele, e mata as que têm resistência 1. Combina com Tinybones, que rouba as cartas descartadas."
+ },
+ "f81ca3a5-356d-4b5d-afc2-a33aa774816b": {
+  "n": "Soul-Shackled Zombie",
+  "t": "Criatura — Zumbi",
+  "x": "Quando esta criatura entrar no campo de batalha, exile até dois cards alvo de um único cemitério. Se ao menos um card de criatura tiver sido exilado dessa forma, cada oponente perde 2 pontos de vida e você ganha 2 pontos de vida.",
+  "s": "Ao entrar, tira até duas cartas de UM cemitério (o seu ou o do oponente). Se uma delas for criatura, o oponente perde 2 de vida e você ganha 2. Bom também para atrapalhar quem usa o cemitério, como cartas de Recapitular ou de reanimar criaturas."
+ },
+ "b4ee6843-bb79-4665-9763-83f656863dc5": {
+  "n": "Stab",
+  "t": "Mágica Instantânea",
+  "x": "A criatura alvo recebe -2/-2 até o final do turno.",
+  "s": "Remoção barata: mata criaturas com resistência 2 ou menos. É instantânea, então dá para usar no turno do oponente. Também serve para terminar uma criatura que já levou dano no combate."
+ },
+ "fd335b2f-e6a2-45ac-949e-a67278b21cb6": {
+  "n": "Tinybones, Bauble Burglar",
+  "t": "Criatura Lendária — Esqueleto Ladino",
+  "x": "Toda vez que um oponente descartar um card, exile-o do cemitério dele com um marcador de esconderijo sobre ele.\nDurante o seu turno, você pode jogar cards que você não possua e que tenham marcadores de esconderijo sobre eles, estando exilados, e pode gastar mana de qualquer tipo para conjurar essas mágicas.\n{3}{B}, {T}: Cada oponente descarta um card. Ative somente como um feitiço.",
+  "s": "Rouba o que o oponente descarta: a carta vai para o exílio e, no seu turno, você pode jogá-la, até terrenos, gastando mana de qualquer cor. Ela mesma faz o oponente descartar por {3}{B}, mas só no seu turno e, como usa {T}, não no turno em que entra. Combina com Seeker's Folly e Arbiter of Woe."
+ },
+ "888f58c0-1860-4df4-ad75-53e634150680": {
+  "n": "Tragic Banshee",
+  "t": "Criatura — Espírito",
+  "x": "Mórbido — Quando esta criatura entrar no campo de batalha, a criatura alvo que um oponente controla recebe -1/-1 até o final do turno. Se uma criatura tiver morrido neste turno, em vez disso, aquela criatura recebe -13/-13 até o final do turno.",
+  "s": "Ao entrar, tira -1/-1 de uma criatura do oponente. Mas se alguma criatura (de qualquer jogador) morreu neste turno, o efeito vira -13/-13 e mata praticamente qualquer coisa. Dica: ataque primeiro e baixe ela depois do combate, quando já tiver morrido alguma criatura."
+ },
+ "3386414c-32fa-40ae-9b30-dab976a158c1": {
+  "n": "Vampire Gourmand",
+  "t": "Criatura — Vampiro",
+  "x": "Toda vez que esta criatura atacar, você pode sacrificar outra criatura. Se fizer isso, compre um card e esta criatura não pode ser bloqueada neste turno.",
+  "s": "Quando ataca, você pode sacrificar outra criatura para comprar uma carta e fazer o Vampiro não poder ser bloqueado. A decisão é na hora do ataque, e é opcional. Fica ainda melhor sacrificando fichas ou criaturas como Infestation Sage."
+ },
+ "4cdbc466-42fc-471f-beab-397caec18101": {
+  "n": "Vengeful Bloodwitch",
+  "t": "Criatura — Vampiro Bruxo",
+  "x": "Toda vez que esta criatura ou outra criatura que você controla morrer, o oponente alvo perde 1 ponto de vida e você ganha 1 ponto de vida.",
+  "s": "Cada criatura sua que morre, ela mesma ou outra (fichas também contam), faz o oponente perder 1 de vida e você ganhar 1. Com muitas criaturas morrendo, como em Blasphemous Edict, o efeito soma bastante."
+ },
+ "a7c6c9b3-91f2-4ecf-b2b0-b0edd96974d9": {
+  "n": "Zul Ashur, Lich Lord",
+  "t": "Criatura Lendária — Zumbi Bruxo",
+  "x": "Salvaguarda — Pague 2 pontos de vida. (Toda vez que esta criatura se torna alvo de uma mágica ou habilidade que um oponente controla, anule-a, a menos que aquele jogador pague 2 pontos de vida.)\n{T}: Você pode conjurar o card de criatura Zumbi alvo de seu cemitério neste turno.",
+  "s": "Protegida por Salvaguarda: o oponente paga 2 de vida para poder escolhê-la como alvo, ou a mágica ou habilidade dele é anulada. Vire-a para poder conjurar um Zumbi do seu cemitério neste turno, pagando o custo normal. Combina com Crypt Feaster, Hungry Ghoul e Soul-Shackled Zombie."
  }
 };
