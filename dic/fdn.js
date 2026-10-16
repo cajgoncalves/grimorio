@@ -9,7 +9,7 @@
 
    Lote 1: cartas 730–771. Lote 2: cartas 700–729.
    Lote 3: cartas brancas novas 1–28. Lote 4: azuis novas 29–53.
-   Lote 5: pretas novas 54–77. */
+   Lote 5: pretas novas 54–77. Lote 6: vermelhas novas 78–97. */
 
 window.DICIONARIO = window.DICIONARIO || {};
 window.DICIONARIO.fdn = {
@@ -87,7 +87,7 @@ window.DICIONARIO.fdn = {
  },
  "74d31e99-ab48-483a-a62e-5b424b27d017": {
   "n": "Rune-Sealed Wall",
-  "t": "Criatura Artefato — Muralha",
+  "t": "Criatura Artefato — Barreira",
   "x": "Defensor\n{T}: Use vigiar 1. (Olhe o card do topo de seu grimório. Você pode colocá-lo em seu cemitério.)",
   "s": "Não ataca, mas segura quase tudo no chão com resistência 6. No seu turno, vire para espiar a carta de cima do grimório: se for ruim, jogue no cemitério; se for boa, deixe lá para comprar."
  },
@@ -355,7 +355,7 @@ window.DICIONARIO.fdn = {
  },
  "291c7abf-9d64-4ba0-ae21-e3459edc9a95": {
   "n": "Crystal Barricade",
-  "t": "Criatura Artefato — Muralha",
+  "t": "Criatura Artefato — Barreira",
   "x": "Defensor (Esta criatura não pode atacar.)\nVocê tem resistência a magia. (Você não pode ser alvo de mágicas ou habilidades que seus oponentes controlam.)\nPrevina todo o dano que não seja de combate que seria causado às outras criaturas que você controla.",
   "s": "Não ataca, mas protege bastante: o oponente não pode mirar em você (em você, jogador, não nas criaturas), e dano que não é de combate não machuca suas outras criaturas. Por exemplo, uma mágica de \"3 de dano\" numa criatura sua não faz nada."
  },
@@ -746,5 +746,127 @@ window.DICIONARIO.fdn = {
   "t": "Criatura Lendária — Zumbi Bruxo",
   "x": "Salvaguarda — Pague 2 pontos de vida. (Toda vez que esta criatura se torna alvo de uma mágica ou habilidade que um oponente controla, anule-a, a menos que aquele jogador pague 2 pontos de vida.)\n{T}: Você pode conjurar o card de criatura Zumbi alvo de seu cemitério neste turno.",
   "s": "Protegida por Salvaguarda: o oponente paga 2 de vida para poder escolhê-la como alvo, ou a mágica ou habilidade dele é anulada. Vire-a para poder conjurar um Zumbi do seu cemitério neste turno, pagando o custo normal. Combina com Crypt Feaster, Hungry Ghoul e Soul-Shackled Zombie."
+ },
+
+ /* ---------------- lote 6: vermelhas novas 78–97 ---------------- */
+ "396cc8ce-9efa-4fc7-90a6-b439b2b021db": {
+  "n": "Battlesong Berserker",
+  "t": "Criatura — Humano Amoque",
+  "x": "Toda vez que você atacar, a criatura alvo que você controla recebe +1/+0 e ganha ameaçar até o final do turno. (Ela só pode ser bloqueada por duas ou mais criaturas.)",
+  "s": "Toda vez que você declara um ataque (com uma criatura ou mais), escolha uma criatura sua: ela ganha +1/+0 e fica difícil de bloquear, porque o oponente precisa de duas criaturas. Vale mais a pena escolher uma criatura que está atacando. Ela mesma é uma 3/4 firme."
+ },
+ "bb8cccc8-e56f-42fa-a0d7-fc889b5e1c7b": {
+  "n": "Boltwave",
+  "t": "Feitiço",
+  "x": "Boltwave causa 3 pontos de dano a cada oponente.",
+  "s": "Dano direto no rosto do oponente: 3 pontos, só isso. Não acerta criaturas. Serve para terminar uma partida apertada. Com Twinflame Tyrant na mesa, o dano dobra para 6."
+ },
+ "fade8af0-5fdb-4237-9dd6-48bfd1d62767": {
+  "n": "Bulk Up",
+  "t": "Mágica Instantânea",
+  "x": "Dobre o poder da criatura alvo até o final do turno.\nRecapitular {4}{R}{R} (Você pode conjurar este card de seu cemitério pagando seu custo de recapitular. Depois, exile-o.)",
+  "s": "Dobra o poder atual da criatura: uma 3/4 vira 6/4 até o fim do turno. Como é instantânea, o melhor momento é depois que os bloqueios foram declarados, para o oponente ter menos chance de reagir. Depois de usada, dá para jogar de novo do cemitério com Recapitular, pagando mais caro."
+ },
+ "818f908c-9af6-4edc-bb0e-193bc830e2e4": {
+  "n": "Chandra, Flameshaper",
+  "t": "Planeswalker Lendário — Chandra",
+  "x": "+2: Adicione {R}{R}{R}. Exile os três cards do topo de seu grimório. Escolha um. Você pode jogar aquele card neste turno.\n+1: Crie uma ficha que seja uma cópia da criatura alvo que você controla, exceto por ter ímpeto e \"No início da etapa final, sacrifique esta ficha.\"\n−4: Chandra causa 8 pontos de dano distribuídos à sua escolha entre qualquer número de criaturas e/ou planeswalkers alvo.",
+  "s": "Planeswalker com lealdade inicial 6: uma habilidade por turno. O +2 dá {R}{R}{R} na hora e deixa você jogar uma das 3 cartas de cima neste turno (as outras duas se perdem no exílio). O +1 copia uma criatura sua com ímpeto, mas a cópia some no fim do turno. O −4 divide 8 de dano entre criaturas e planeswalkers do oponente, e limpa boa parte da mesa."
+ },
+ "c107e271-5741-4a84-bfc4-3bc322972d0d": {
+  "n": "Courageous Goblin",
+  "t": "Criatura — Goblin",
+  "x": "Toda vez que esta criatura atacar enquanto você controlar uma criatura com poder 4 ou maior, esta criatura recebe +1/+0 e ganha ameaçar até o final do turno. (Ela só pode ser bloqueada por duas ou mais criaturas.)",
+  "s": "Uma 2/2 barata que melhora quando você tem uma criatura de poder 4 ou mais na mesa (como Gorehorn Raider ou Sower of Chaos). Aí ela ataca como 3/2 difícil de bloquear."
+ },
+ "16ab9451-f3da-4f61-8e2b-d9c84e0e5428": {
+  "n": "Crackling Cyclops",
+  "t": "Criatura — Ciclope Mago",
+  "x": "Toda vez que você conjurar uma mágica não de criatura, esta criatura recebe +3/+0 até o final do turno.",
+  "s": "É uma 0/4 que só vira ameaça quando você conjura mágicas que não são criatura (instantâneas, feitiços, encantamentos…): aí ela fica 3/4 até o fim do turno. O bônus vem na hora de conjurar, não precisa esperar a mágica resolver. Dica: conjure antes de atacar, ou use uma instantânea durante o combate."
+ },
+ "328a0691-9453-4f2d-a9c3-5c69da252d20": {
+  "n": "Dragon Trainer",
+  "t": "Criatura — Humano",
+  "x": "Quando esta criatura entrar no campo de batalha, crie uma ficha de criatura Dragão vermelha 4/4 com voar.",
+  "s": "Custa 5 manas, mas você ganha duas criaturas de uma vez: ela mesma (1/1) e um Dragão 4/4 que voa. O Dragão continua mesmo se o Dragon Trainer morrer."
+ },
+ "112f2b3f-32e7-40b1-b80e-0b99184a840c": {
+  "n": "Electroduplicate",
+  "t": "Feitiço",
+  "x": "Crie uma ficha que seja uma cópia da criatura alvo que você controla, exceto por ter ímpeto e \"No início da etapa final, sacrifique esta ficha.\"\nRecapitular {2}{R}{R} (Você pode conjurar este card de seu cemitério pagando seu custo de recapitular. Depois, exile-o.)",
+  "s": "Copia uma criatura sua. A cópia tem ímpeto (ataca na hora, sem enjoo de invocação) e é sacrificada no fim do turno. Se a criatura tem efeito ao entrar, como Dragon Trainer ou Gorehorn Raider, a cópia repete esse efeito. Cuidado com criatura lendária: pela regra da lenda, você terá que ficar com uma só. Depois dá para jogar de novo do cemitério com Recapitular."
+ },
+ "d44f3724-17b7-48f0-885d-75292669f971": {
+  "n": "Fiery Annihilation",
+  "t": "Mágica Instantânea",
+  "x": "Fiery Annihilation causa 5 pontos de dano à criatura alvo. Exile até um Equipamento alvo anexado àquela criatura. Se aquela criatura morreria neste turno, em vez disso, exile-a.",
+  "s": "Remoção forte e barata, que ainda funciona no turno do oponente: 5 de dano em uma criatura. Se ela tiver um Equipamento, você pode exilar o Equipamento também. Se a criatura morreria, ela é exilada em vez de ir para o cemitério, então não volta e não ativa efeitos de quando morre."
+ },
+ "4c64feae-95d7-426d-9e42-d3b0841d2054": {
+  "n": "Goblin Boarders",
+  "t": "Criatura — Goblin Pirata",
+  "x": "Raide — Esta criatura entra no campo de batalha com um marcador +1/+1 sobre ela se você atacou neste turno.",
+  "s": "Se você atacou neste turno antes de baixá-lo, ele chega como uma 4/3 em vez de 3/2. Dica: ataque primeiro e baixe ele depois do combate."
+ },
+ "79824266-bffa-476c-bdd3-976e9d789a42": {
+  "n": "Goblin Negotiation",
+  "t": "Feitiço",
+  "x": "Goblin Negotiation causa X pontos de dano à criatura alvo. Crie um número de fichas de criatura Goblin vermelha 1/1 igual à quantidade de dano excedente causado àquela criatura dessa forma.",
+  "s": "Você escolhe X ao conjurar. Dano excedente é o que passa do necessário para matar a criatura. Exemplo: X = 5 em uma criatura 2/2 mata ela e sobram 3 de excesso, ou seja, 3 Goblins. Quanto menor o alvo e maior o X, mais Goblins."
+ },
+ "41699d92-c209-4fcb-bbd6-685b3437d0c2": {
+  "n": "Gorehorn Raider",
+  "t": "Criatura — Minotauro Pirata",
+  "x": "Raide — Quando esta criatura entrar no campo de batalha, se você atacou neste turno, esta criatura causa 2 pontos de dano a qualquer alvo.",
+  "s": "Um 4/4 com bônus: se você atacou neste turno, ao entrar ele causa 2 de dano em qualquer alvo (criatura, jogador ou planeswalker). Dica: ataque primeiro e baixe ele depois do combate."
+ },
+ "49f0da4a-e046-4220-b90e-e105a5f2ef00": {
+  "n": "Incinerating Blast",
+  "t": "Feitiço",
+  "x": "Incinerating Blast causa 6 pontos de dano à criatura alvo.\nVocê pode descartar um card. Se fizer isso, compre um card.",
+  "s": "Remoção pesada: 6 de dano mata quase qualquer criatura. Depois você pode, se quiser, trocar uma carta ruim da mão por uma nova. É opcional."
+ },
+ "e8fd428f-7521-4e6a-86b7-835f20ee3c5c": {
+  "n": "Kellan, Planar Trailblazer",
+  "t": "Criatura Lendária — Humano Fada Batedor",
+  "x": "{1}{R}: Se Kellan for um Batedor, ele se torna um Humano Fada Detetive e ganha \"Toda vez que Kellan causar dano de combate a um jogador, exile o card do topo de seu grimório. Você pode jogar aquele card neste turno.\"\n{2}{R}: Se Kellan for um Detetive, ele se torna um Humano Fada Ladino 3/2 e ganha golpe duplo.",
+  "s": "Custa só {R} e melhora em duas etapas. Primeiro pague {1}{R}: ele vira Detetive e, quando acerta o oponente, você ganha uma carta de bônus. Depois pague {2}{R}: vira uma 3/2 com golpe duplo (bate duas vezes). As mudanças ficam, não acabam no fim do turno, mas têm que ser feitas nessa ordem."
+ },
+ "5097f4e6-50af-4641-909f-db44abf0ce32": {
+  "n": "Rite of the Dragoncaller",
+  "t": "Encantamento",
+  "x": "Toda vez que você conjurar uma mágica instantânea ou feitiço, crie uma ficha de criatura Dragão vermelha 5/5 com voar.",
+  "s": "Custa 6 manas, mas depois disso cada instantânea ou feitiço que você conjurar cria um Dragão 5/5 que voa, mesmo que a mágica seja anulada. Com mágicas baratas, como Stab ou Boltwave, a mesa se enche de dragões."
+ },
+ "86ec0b56-497f-481c-a03a-c4e64e8e7404": {
+  "n": "Searslicer Goblin",
+  "t": "Criatura — Goblin Guerreiro",
+  "x": "Raide — No início de sua etapa final, se você atacou neste turno, crie uma ficha de criatura Goblin vermelha 1/1.",
+  "s": "Toda vez que você ataca (com qualquer criatura), ela cria um Goblin 1/1 no fim do turno, desde que ela esteja na mesa. Boa para quem joga agressivo."
+ },
+ "39cae244-96e1-4ea3-899a-3aa871cca31c": {
+  "n": "Slumbering Cerberus",
+  "t": "Criatura — Cão",
+  "x": "Esta criatura não desvira durante sua etapa de desvirar.\nMórbido — No início de cada etapa final, se uma criatura tiver morrido neste turno, desvire esta criatura.",
+  "s": "Uma 4/2 por 2 manas que ataca uma vez e depois dorme: ela fica virada e não desvira sozinha. Ela só acorda no fim de um turno (seu ou do oponente) em que alguma criatura morreu. Entra desvirada, então pode bloquear logo de cara."
+ },
+ "2ec1860b-89cc-4529-8b8c-fb47f79f2b4b": {
+  "n": "Sower of Chaos",
+  "t": "Criatura — Diabo",
+  "x": "{2}{R}: A criatura alvo não pode bloquear neste turno.",
+  "s": "Um 4/3 que ajuda a atacar: por {2}{R}, uma criatura do oponente fica sem poder bloquear neste turno. Dá para repetir para tirar vários bloqueadores. Dica: use antes de o oponente declarar os bloqueios, no início do combate."
+ },
+ "ba5a2689-3578-4b1a-99d6-6b6d2356330e": {
+  "n": "Strongbox Raider",
+  "t": "Criatura — Orc Pirata",
+  "x": "Raide — Quando esta criatura entrar no campo de batalha, se você atacou neste turno, exile os dois cards do topo de seu grimório. Escolha um deles. Até o final de seu próximo turno, você pode jogar aquele card.",
+  "s": "Um 5/2 que, se você atacou antes de baixá-lo, olha as 2 cartas de cima: você escolhe uma e pode jogá-la até o fim do seu próximo turno. A outra se perde no exílio. Dica: ataque primeiro e baixe ele depois do combate."
+ },
+ "321b5cc6-8df6-4292-97a0-a6a3a22f3b55": {
+  "n": "Twinflame Tyrant",
+  "t": "Criatura — Dragão",
+  "x": "Voar\nSe uma fonte que você controla causaria dano a um oponente ou a uma permanente que um oponente controla, em vez disso, ela causa o dobro daquele dano.",
+  "s": "Um Dragão 3/5 que voa e dobra TODO o dano que suas fontes causam ao oponente ou às coisas dele: criaturas, mágicas e habilidades. Ele mesmo bate com 6, e um Boltwave vira 6 de dano. Não dobra o dano que você ou suas coisas recebem."
  }
 };

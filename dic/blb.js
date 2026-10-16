@@ -151,7 +151,7 @@ window.DICIONARIO.blb = {
  },
  "0a2fbdd3-4940-4bbf-ae19-f6d00d7ff294": {
   "n": "Junkblade Bruiser",
-  "t": "Criatura — Guaxinim Berserker",
+  "t": "Criatura — Guaxinim Amoque",
   "x": "Atropelar\nToda vez que você despender 4, Junkblade Bruiser recebe +2/+1 até o final do turno.",
   "s": "Um 4/5 que passa dano por cima dos bloqueadores. No turno em que você gastar quatro manas ou mais, ela fica ainda maior."
  },
