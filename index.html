@@ -913,7 +913,7 @@ var Traducao = (function () {
     nomad:"Nômade", octopus:"Polvo", ogre:"Ogro", ooze:"Lodo",
     ouphe:"Trasgo", ox:"Boi", oyster:"Ostra", pegasus:"Pégaso",
     peasant:"Plebeu", phoenix:"Fênix", pilot:"Piloto", pirate:"Pirata",
-    plant:"Planta", praetor:"Pretor", rabbit:"Coelho", raccoon:"Guaxinim",
+    plant:"Planta", praetor:"Pretor", rabbit:"Coelho", ranger:"Guardião", hyena:"Hiena", raccoon:"Guaxinim",
     rat:"Rato", rebel:"Rebelde", rhino:"Rinoceronte", rogue:"Ladino",
     salamander:"Salamandra", samurai:"Samurai", satyr:"Sátiro", scarecrow:"Espantalho",
     scout:"Batedor", serpent:"Serpente", shade:"Sombra", shaman:"Xamã",
@@ -2884,7 +2884,9 @@ function mostrarCarta(carta,oracle,semPt,verbete){
      inglês. O que não casa com nenhum molde conhecido fica em inglês e
      destacado — nunca vira chute. */
   var traduzir = semPt && typeof Traducao !== "undefined";
-  var revisado = semPt && verbete && verbete.x;   /* camada 1 tem prioridade */
+  /* camada 1 tem prioridade. Texto vazio ("x":"") também vale como revisado: é a
+     carta sem habilidade nenhuma, que só precisa do tipo traduzido. */
+  var revisado = semPt && verbete && typeof verbete.x === "string";
   var vertidas = 0, totalFrases = 0;
   var pendentes = [];   /* trechos que sobraram para a camada automática */
 
@@ -4021,7 +4023,7 @@ window.addEventListener("appinstalled",function(){ barraInst.hidden=true; });
 /* Carimbo de versão: serve para saber, olhando a tela, qual versão está
    rodando — e se o tradutor carregou ou não. Uma fonte só para o número:
    o carimbo e o "número de coleção" dos créditos saem os dois daqui. */
-var VERSAO_APP = 24;
+var VERSAO_APP = 25;
 (function(){
   var c=document.getElementById("carimbo");
   var col=document.getElementById("colecao");

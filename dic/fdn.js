@@ -9,7 +9,8 @@
 
    Lote 1: cartas 730–771. Lote 2: cartas 700–729.
    Lote 3: cartas brancas novas 1–28. Lote 4: azuis novas 29–53.
-   Lote 5: pretas novas 54–77. Lote 6: vermelhas novas 78–97. */
+   Lote 5: pretas novas 54–77. Lote 6: vermelhas novas 78–97.
+   Lote 7: verdes novas 98–114. */
 
 window.DICIONARIO = window.DICIONARIO || {};
 window.DICIONARIO.fdn = {
@@ -868,5 +869,109 @@ window.DICIONARIO.fdn = {
   "t": "Criatura — Dragão",
   "x": "Voar\nSe uma fonte que você controla causaria dano a um oponente ou a uma permanente que um oponente controla, em vez disso, ela causa o dobro daquele dano.",
   "s": "Um Dragão 3/5 que voa e dobra TODO o dano que suas fontes causam ao oponente ou às coisas dele: criaturas, mágicas e habilidades. Ele mesmo bate com 6, e um Boltwave vira 6 de dano. Não dobra o dano que você ou suas coisas recebem."
+ },
+
+ /* ---------------- lote 7: verdes novas 98–114 ---------------- */
+ "4c48de92-e053-4af7-b936-d7ec0875e0d3": {
+  "n": "Ambush Wolf",
+  "t": "Criatura — Lobo",
+  "x": "Lampejo (Você pode conjurar esta mágica a qualquer momento em que puder conjurar uma mágica instantânea.)\nQuando esta criatura entrar no campo de batalha, exile até um card alvo de um cemitério.",
+  "s": "Um 4/2 por 3 manas que tem lampejo: dá para baixar no turno do oponente, até no meio do ataque dele, e já bloquear. Ao entrar, tira uma carta de qualquer cemitério do jogo, o que atrapalha cartas que voltam de lá."
+ },
+ "6a381121-9134-489c-8c7e-44be1936b0e2": {
+  "n": "Apothecary Stomper",
+  "t": "Criatura — Elefante",
+  "x": "Vigilância (Atacar não faz esta criatura virar.)\nQuando esta criatura entrar no campo de batalha, escolha um —\n• Coloque dois marcadores +1/+1 na criatura alvo que você controla.\n• Você ganha 4 pontos de vida.",
+  "s": "Um 4/4 com vigilância (ataca sem virar). Ao entrar você escolhe: dar +2/+2 permanente a uma criatura sua, que pode ser ela mesma e vira 6/6, ou ganhar 4 de vida. Ótimo para quando você está apertado."
+ },
+ "db794af5-ba2e-4b10-b213-e481e8a50432": {
+  "n": "Beast-Kin Ranger",
+  "t": "Criatura — Elfo Guardião",
+  "x": "Atropelar (Esta criatura pode causar dano de combate excedente ao jogador ou planeswalker que ela está atacando.)\nToda vez que outra criatura entrar no campo de batalha sob seu controle, esta criatura recebe +1/+0 até o final do turno.",
+  "s": "Uma 3/3 com atropelar. Cada criatura nova que entra do seu lado, fichas também, dá +1/+0 a ela até o fim do turno. Dica: baixe as criaturas antes de atacar. Combina com Elfsworn Giant, que cria fichas."
+ },
+ "898da62e-d29a-4ddc-be69-2ddec54614f5": {
+  "n": "Cackling Prowler",
+  "t": "Criatura — Hiena Ladino",
+  "x": "Salvaguarda {2} (Toda vez que esta criatura se tornar alvo de uma mágica ou habilidade que um oponente controla, anule-a, a menos que aquele jogador pague {2}.)\nMórbido — No início de sua etapa final, se uma criatura tiver morrido neste turno, coloque um marcador +1/+1 nesta criatura.",
+  "s": "Com Salvaguarda {2}, o oponente paga 2 manas a mais para escolhê-la como alvo, senão a mágica ou habilidade dele é anulada. No fim do seu turno ela ganha +1/+1 se alguma criatura morreu naquele turno, sua ou do oponente. Só cresce uma vez por turno."
+ },
+ "7f2ba562-8d5e-4915-967e-54916c3c5876": {
+  "n": "Eager Trufflesnout",
+  "t": "Criatura — Javali",
+  "x": "Atropelar (Esta criatura pode causar dano de combate excedente ao jogador ou planeswalker que ela está atacando.)\nToda vez que esta criatura causar dano de combate a um jogador, crie uma ficha de Comida. (Ela é um artefato com \"{2}, {T}, sacrifique este artefato: Você ganha 3 pontos de vida.\")",
+  "s": "Um 4/2 com atropelar. Toda vez que ele machuca o oponente, mesmo que seja só o dano que sobrou de um bloqueio, você ganha uma ficha de Comida. A Comida custa {2} para virar 3 pontos de vida."
+ },
+ "f6abdf34-cfdc-465c-b067-cdebb659406e": {
+  "n": "Elfsworn Giant",
+  "t": "Criatura — Gigante",
+  "x": "Alcance (Esta criatura pode bloquear criaturas com voar.)\nAterragem — Toda vez que um terreno entrar no campo de batalha sob seu controle, crie uma ficha de criatura Elfo Guerreiro verde 1/1.",
+  "s": "Um 5/3 que bloqueia criaturas voadoras. Toda vez que um terreno entra do seu lado, você ganha um Elfo 1/1. Dica: baixe o Gigante antes de jogar o terreno do turno."
+ },
+ "adac526d-1a85-431a-a302-0a4b8f4a0c44": {
+  "n": "Elvish Regrower",
+  "t": "Criatura — Elfo Druida",
+  "x": "Quando esta criatura entrar no campo de batalha, devolva o card de permanente alvo de seu cemitério para a sua mão.",
+  "s": "Um 4/3 que traz uma carta de volta: pode ser criatura, artefato, encantamento, terreno ou planeswalker, mas não mágica instantânea nem feitiço. Boa para recuperar uma criatura forte que morreu."
+ },
+ "fbfa19ca-98bb-4c7d-a04e-920a8aafb031": {
+  "n": "Felling Blow",
+  "t": "Feitiço",
+  "x": "Coloque um marcador +1/+1 na criatura alvo que você controla. Depois, aquela criatura causa dano igual ao seu poder à criatura alvo que um oponente controla.",
+  "s": "Primeiro a sua criatura ganha +1/+1 para sempre, depois ela causa dano igual ao poder dela à criatura do oponente. É dano de um lado só: a sua criatura não leva dano de volta. Quanto maior a sua criatura, melhor a remoção."
+ },
+ "f6476884-f73f-465f-8e7f-ea312a5b306d": {
+  "n": "Loot, Exuberant Explorer",
+  "t": "Criatura Lendária — Besta Nobre",
+  "x": "Você pode jogar um terreno adicional em cada um de seus turnos.\n{4}{G}{G}, {T}: Olhe os seis cards do topo de seu grimório. Você pode revelar dentre eles um card de criatura com valor de mana igual ou inferior ao número de terrenos que você controla e colocá-lo no campo de batalha. Coloque o restante no fundo de seu grimório em ordem aleatória.",
+  "s": "Deixa você jogar dois terrenos por turno, o que enche a mesa de mana mais rápido. Mais tarde, por seis manas e virando ela, você olha as 6 cartas de cima e coloca de graça no campo uma criatura cujo custo seja no máximo o número de terrenos que você controla. Como usa {T}, não vale no turno em que ela entra."
+ },
+ "84122d81-9634-4d3f-85a5-f6cf4303691a": {
+  "n": "Mossborn Hydra",
+  "t": "Criatura — Elemental Hidra",
+  "x": "Atropelar (Esta criatura pode causar dano de combate excedente ao jogador ou planeswalker que ela está atacando.)\nEsta criatura entra no campo de batalha com um marcador +1/+1 sobre ela.\nAterragem — Toda vez que um terreno entrar no campo de batalha sob seu controle, dobre o número de marcadores +1/+1 nesta criatura.",
+  "s": "Começa como uma 1/1 com atropelar, mas cada terreno que você joga dobra os marcadores dela: 1, 2, 4, 8… Dica: guarde terrenos na mão para jogar depois que ela estiver na mesa. Com Loot, que deixa jogar dois terrenos por turno, ela dobra duas vezes."
+ },
+ "ac68fe30-a4a5-45f6-8782-fed57718c42e": {
+  "n": "Needletooth Pack",
+  "t": "Criatura — Dinossauro",
+  "x": "Mórbido — No início de sua etapa final, se uma criatura tiver morrido neste turno, coloque dois marcadores +1/+1 na criatura alvo que você controla.",
+  "s": "Um 4/5 sólido. No fim do seu turno, se alguma criatura morreu naquele turno (sua ou do oponente), ponha +2/+2 permanente numa criatura sua, que pode ser ela mesma. Acontece só uma vez por turno."
+ },
+ "1e03aad2-6426-4d18-a0e5-bc3d8e6b7b11": {
+  "n": "Preposterous Proportions",
+  "t": "Feitiço",
+  "x": "As criaturas que você controla recebem +10/+10 e ganham vigilância até o final do turno.",
+  "s": "Custa 7 manas, mas dá +10/+10 a todas as suas criaturas e vigilância, então elas atacam e ainda ficam prontas para bloquear. Como é um feitiço, você conjura no seu turno, antes de atacar. Só vale para as criaturas que estiverem na mesa quando ela resolver."
+ },
+ "e56629ba-82d4-470f-9a6b-40c29d835af2": {
+  "n": "Quakestrider Ceratops",
+  "t": "Criatura — Dinossauro",
+  "x": "",
+  "s": "Não tem habilidade nenhuma: é só um monstro 12/8 por 6 manas. Pede três manas verdes no custo, então precisa de um deck bem verde. Como não tem voar nem atropelar, uma criatura pequena ainda pode bloquear ele."
+ },
+ "01635d21-aeda-4754-9d94-68fcd0cd6556": {
+  "n": "Quilled Greatwurm",
+  "t": "Criatura — Vorme",
+  "x": "Atropelar (Esta criatura pode causar dano de combate excedente ao jogador ou planeswalker que ela está atacando.)\nToda vez que uma criatura que você controla causar dano de combate durante o seu turno, coloque nela essa mesma quantidade de marcadores +1/+1. (Ela precisa sobreviver para receber os marcadores.)\nVocê pode conjurar este card de seu cemitério removendo seis marcadores dentre as criaturas que você controla, além de pagar seus outros custos.",
+  "s": "Um 7/7 com atropelar que faz suas criaturas crescerem: toda criatura sua que causa dano de combate no seu turno ganha tantos marcadores +1/+1 quanto o dano que causou, desde que sobreviva. Se ele morrer, dá para jogar de novo do cemitério pagando o custo e removendo seis marcadores das suas criaturas."
+ },
+ "6883e79e-0b4f-4fb8-aee3-a3905246a408": {
+  "n": "Spinner of Souls",
+  "t": "Criatura — Aranha Espírito",
+  "x": "Alcance (Esta criatura pode bloquear criaturas com voar.)\nToda vez que outra criatura não ficha que você controla morrer, você pode revelar cards do topo de seu grimório até revelar um card de criatura. Coloque aquele card na sua mão e o restante no fundo de seu grimório em ordem aleatória.",
+  "s": "Um 4/3 que bloqueia voadores. Quando outra criatura sua (que não seja ficha) morre, você pode procurar uma criatura no grimório e botar na mão. As outras cartas reveladas vão para o fundo do grimório, não para o cemitério. Boa com cartas que sacrificam criaturas."
+ },
+ "398afdf2-4a12-430e-85c9-c68847230939": {
+  "n": "Sylvan Scavenging",
+  "t": "Encantamento",
+  "x": "No início de sua etapa final, escolha um —\n• Coloque um marcador +1/+1 na criatura alvo que você controla.\n• Crie uma ficha de criatura Guaxinim verde 3/3 se você controlar uma criatura com poder 4 ou maior.",
+  "s": "Todo fim de turno seu, você escolhe: dar +1/+1 permanente a uma criatura sua, ou criar um Guaxinim 3/3, que só funciona se você tiver uma criatura de poder 4 ou mais. Com criaturas grandes do verde, é uma criatura nova por turno."
+ },
+ "2f57a220-9f64-4143-979a-d6aaf63d49b2": {
+  "n": "Treetop Snarespinner",
+  "t": "Criatura — Aranha",
+  "x": "Alcance (Esta criatura pode bloquear criaturas com voar.)\nToque mortífero (Qualquer quantidade de dano que esta criatura causar a uma criatura é suficiente para destruí-la.)\n{2}{G}: Coloque um marcador +1/+1 na criatura alvo que você controla. Ative somente como um feitiço.",
+  "s": "Uma 1/4 que bloqueia voadores e destrói qualquer criatura que ela machucar, ótima para defender. Mais tarde, por {2}{G}, ela pode dar +1/+1 permanente a uma criatura sua, mas só no seu turno, na fase principal, como se fosse um feitiço."
  }
 };
