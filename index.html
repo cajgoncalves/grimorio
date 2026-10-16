@@ -127,6 +127,33 @@ input:focus-visible{outline:2px solid var(--gold);outline-offset:1px}
 .go:disabled{opacity:.5;cursor:default}
 .go:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
 .hint{font-size:.83rem;color:var(--ink-soft);margin:.15rem 0 0}
+/* ---- escanear a carta com a câmera ---- */
+.btn-scan{
+  display:flex;align-items:center;justify-content:center;gap:.5rem;width:100%;
+  margin:.55rem 0 0;padding:.62rem 1rem;font-family:Eczar,Georgia,serif;font-size:.98rem;font-weight:600;
+  color:var(--ink);background:var(--bg-2);border:1px solid var(--rule);border-radius:2px;cursor:pointer;
+}
+.btn-scan:hover{border-color:var(--gold-soft)}
+.btn-scan:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.scan{margin:.8rem 0 0}
+.scan-visor{
+  position:relative;width:100%;max-width:26rem;margin:0 auto;aspect-ratio:3/4;
+  background:#000;border-radius:4px;overflow:hidden;
+}
+.scan-visor video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.scan .molde{
+  position:absolute;left:50%;top:50%;width:72%;aspect-ratio:63/88;transform:translate(-50%,-50%);
+  border:3px solid rgba(255,255,255,.85);border-radius:4.5%/3.2%;
+  box-shadow:0 0 0 999px rgba(0,0,0,.38);pointer-events:none;transition:border-color .2s;
+}
+.scan .molde.lendo{border-color:#E8C35A}
+.scan .molde.achou{border-color:#6FD394}
+.scan-dica{
+  position:absolute;left:0;right:0;bottom:.45rem;padding:0 .6rem;text-align:center;color:#fff;
+  font-size:.85rem;text-shadow:0 1px 3px #000;pointer-events:none;
+}
+.scan-estado{margin:.55rem 0 0;text-align:center;font-style:italic;color:var(--ink-soft);min-height:1.4em}
+.scan-botoes{display:flex;justify-content:center;margin-top:.5rem}
 /* a tela inicial tinha como único conteúdo o rodapé jurídico */
 .vazio{
   margin:1.4rem 0 0;padding:.9rem 1rem;border:1px solid var(--rule);
@@ -671,6 +698,20 @@ footer a{color:var(--gold)}
     <button class="go" id="buscar">Buscar</button>
   </div>
   <p class="hint" id="dica-busca">Pode digitar em português ou em inglês, e não precisa acertar a grafia.</p>
+  <button class="btn-scan" id="escanear" type="button" hidden>
+    <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path fill="currentColor" d="M9 3 7.2 5H4a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-3.2L15 3H9zm3 14.5A4.5 4.5 0 1 1 12 8.5a4.5 4.5 0 0 1 0 9zm0-2a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5z"/></svg>
+    Escanear carta com a câmera
+  </button>
+  <div class="scan" id="scan" hidden>
+    <div class="scan-visor">
+      <video id="scan-video" playsinline muted autoplay></video>
+      <div class="molde" id="scan-molde"></div>
+      <div class="scan-dica" id="scan-dica"></div>
+    </div>
+    <p class="scan-estado" id="scan-estado" aria-live="polite"></p>
+    <div class="scan-botoes"><button class="go" id="scan-fechar" type="button">Fechar câmera</button></div>
+    <p class="hint" style="text-align:center">A imagem da câmera fica só no seu celular: só o nome e o número da carta são consultados.</p>
+  </div>
   <div class="recent" id="recentes"></div>
   <div id="saida" aria-live="polite"></div>
   <div class="vazio" id="tela-vazia">
@@ -2184,6 +2225,7 @@ TABS.forEach(function(pair){
       b.setAttribute("aria-selected",on?"true":"false");
       p.hidden=!on;
     });
+    if(typeof pararScan==="function") pararScan();   // a câmera não fica ligada em outra aba
     window.scrollTo(0,0);
   });
 });
@@ -3318,6 +3360,104 @@ FASES.forEach(function(f){
   li.appendChild(det); ol.appendChild(li);
 });
 
+/* ================= escanear a carta (câmera) ================= */
+/* O motor do scanner (scanner.js, ~30 KB), o índice de artes (artes.js,
+   ~145 KB) e o leitor de texto (Tesseract, vários MB) só são baixados
+   quando a pessoa toca em "Escanear": a abertura do app continua leve.
+   O motor é o mesmo do laboratório (laboratorio.html). Ao reconhecer, a
+   carta abre pelo mesmo caminho da busca por nome. */
+var btnScan=document.getElementById("escanear");
+var painelScan=document.getElementById("scan");
+var scanEstado=document.getElementById("scan-estado");
+var scanDica=document.getElementById("scan-dica");
+var scanSessao=null, scanAtivo=false, scanScript=null;
+
+function carregarMotorScan(){
+  if(window.Scanner) return Promise.resolve();
+  if(!scanScript){
+    scanScript=new Promise(function(ok,erro){
+      var s=document.createElement("script");
+      s.src="scanner.js"; s.async=true;
+      s.onload=function(){ ok(); };
+      s.onerror=function(){ scanScript=null; erro(new Error("scanner.js não carregou")); };
+      document.head.appendChild(s);
+    });
+  }
+  return scanScript;
+}
+function pararScan(){
+  /* fecha a câmera e esconde o painel (também ao trocar de aba ou sair do app) */
+  var estavaAberto=scanAtivo;
+  scanAtivo=false;
+  if(scanSessao) scanSessao.desligar();
+  painelScan.hidden=true;
+  if(btnScan && navigator.mediaDevices) btnScan.hidden=false;
+  return estavaAberto;
+}
+async function abrirScan(){
+  if(scanAtivo) return;
+  scanAtivo=true;
+  btnScan.hidden=true; painelScan.hidden=false;
+  scanEstado.textContent="Abrindo a câmera…"; scanDica.textContent="";
+  painelScan.scrollIntoView({block:"start",behavior:"smooth"});
+  /* No iPhone, a câmera tem que ser pedida logo no toque, antes de baixar
+     qualquer coisa. Por isso o pedido sai aqui, e o motor é carregado depois. */
+  var pedido=navigator.mediaDevices.getUserMedia({audio:false,video:{facingMode:{ideal:"environment"},width:{ideal:1920},height:{ideal:1920}}});
+  var fluxo;
+  try{
+    fluxo=await pedido;
+    await carregarMotorScan();
+  }catch(e){
+    if(fluxo) fluxo.getTracks().forEach(function(t){ t.stop(); });
+    var semPermissao=e && (e.name==="NotAllowedError"||e.name==="SecurityError");
+    pararScan();
+    aviso(semPermissao
+      ? "O Grimório não tem permissão para usar a câmera. No iPhone: Ajustes → Safari → Câmera → Permitir. No app instalado, feche e abra de novo e toque em Permitir."
+      : (e && e.message==="scanner.js não carregou"
+          ? "Não consegui baixar o scanner. Confira a internet e tente de novo."
+          : "Não consegui abrir a câmera"+(e&&e.name?" ("+e.name+")":"")+"."),true);
+    return;
+  }
+  if(!scanAtivo){ fluxo.getTracks().forEach(function(t){ t.stop(); }); return; }   // fechou enquanto abria
+
+  Scanner.config({api:api, prefixo:"mtgpt.scan."});
+  if(!scanSessao){
+    scanSessao=Scanner.sessao({
+      video:document.getElementById("scan-video"), molde:document.getElementById("scan-molde"),
+      aoAchar:function(v){
+        var nome=v.carta && v.carta.name;
+        pararScan();
+        if(navigator.vibrate) navigator.vibrate(60);
+        if(nome){ qEl.value=nome; atualizarLimpar(); procurar(nome); window.scrollTo(0,0); }
+      },
+      aoDica:function(t){ if(scanAtivo) scanDica.textContent=t; },
+      aoEstado:function(t){ if(scanAtivo) scanEstado.textContent=t; }
+    });
+  }
+  try{ await scanSessao.ligar(fluxo); }
+  catch(e){ pararScan(); aviso("Não consegui abrir a câmera"+(e&&e.name?" ("+e.name+")":"")+".",true); return; }
+
+  scanEstado.textContent="Preparando o reconhecimento…";
+  try{
+    var pronto=await Scanner.carregarTudo();
+    if(!scanAtivo) return;
+    scanEstado.textContent=pronto.artes ? "Procurando a carta…" : "Procurando a carta… (só pelo texto)";
+    scanDica.textContent="Encaixe a carta no molde, a um palmo do celular";
+  }catch(e){
+    pararScan();
+    aviso("Não consegui baixar o scanner. Confira a internet e tente de novo.",true);
+  }
+}
+if(btnScan){
+  if(navigator.mediaDevices && navigator.mediaDevices.getUserMedia){
+    btnScan.hidden=false;
+    btnScan.addEventListener("click",abrirScan);
+    document.getElementById("scan-fechar").addEventListener("click",pararScan);
+    document.addEventListener("visibilitychange",function(){ if(document.hidden) pararScan(); });
+    window.addEventListener("pagehide",pararScan);
+  }
+}
+
 /* ================= ligações ================= */
 /* Buscar fecha a lista de sugestões e solta o campo: no celular ela ficava
    aberta por cima do resultado, com o teclado ocupando o resto da tela. */
@@ -3862,7 +4002,7 @@ window.addEventListener("appinstalled",function(){ barraInst.hidden=true; });
 /* Carimbo de versão: serve para saber, olhando a tela, qual versão está
    rodando — e se o tradutor carregou ou não. Uma fonte só para o número:
    o carimbo e o "número de coleção" dos créditos saem os dois daqui. */
-var VERSAO_APP = 20;
+var VERSAO_APP = 21;
 (function(){
   var c=document.getElementById("carimbo");
   var col=document.getElementById("colecao");

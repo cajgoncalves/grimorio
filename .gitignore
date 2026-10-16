@@ -1,0 +1,16 @@
+﻿# Só os arquivos do site vão para o GitHub. O resto fica só no computador.
+*
+!.gitignore
+!index.html
+!sw.js
+!laboratorio.html
+!artes.js
+!scanner.js
+!manifest.webmanifest
+!icon-192.png
+!icon-512.png
+!icon-maskable-512.png
+!dic/
+!dic/blb.js
+!dic/fdn.js
+!dic/indice.js
