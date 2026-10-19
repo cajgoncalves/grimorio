@@ -10,7 +10,7 @@
    Lote 1: cartas 730–771. Lote 2: cartas 700–729.
    Lote 3: cartas brancas novas 1–28. Lote 4: azuis novas 29–53.
    Lote 5: pretas novas 54–77. Lote 6: vermelhas novas 78–97.
-   Lote 7: verdes novas 98–114. */
+   Lote 7: verdes novas 98–114. Lote 8: multicoloridas novas 115–126. */
 
 window.DICIONARIO = window.DICIONARIO || {};
 window.DICIONARIO.fdn = {
@@ -973,5 +973,79 @@ window.DICIONARIO.fdn = {
   "t": "Criatura — Aranha",
   "x": "Alcance (Esta criatura pode bloquear criaturas com voar.)\nToque mortífero (Qualquer quantidade de dano que esta criatura causar a uma criatura é suficiente para destruí-la.)\n{2}{G}: Coloque um marcador +1/+1 na criatura alvo que você controla. Ative somente como um feitiço.",
   "s": "Uma 1/4 que bloqueia voadores e destrói qualquer criatura que ela machucar, ótima para defender. Mais tarde, por {2}{G}, ela pode dar +1/+1 permanente a uma criatura sua, mas só no seu turno, na fase principal, como se fosse um feitiço."
+ },
+
+ /* ---------------- lote 8: multicoloridas novas 115–126 ---------------- */
+ "17ce2c17-b69b-4ebf-9c3c-c64e771af101": {
+  "n": "Alesha, Who Laughs at Fate",
+  "t": "Criatura Lendária — Humano Guerreiro",
+  "x": "Iniciativa\nToda vez que Alesha atacar, coloque um marcador +1/+1 nela.\nRaide — No início de sua etapa final, se você atacou neste turno, devolva do seu cemitério para o campo de batalha o card de criatura alvo com valor de mana igual ou inferior ao poder de Alesha.",
+  "s": "Ela bate primeiro (iniciativa) e cresce +1/+1 de forma permanente toda vez que ataca. Se você atacou, no fim do turno ela traz de volta do cemitério uma criatura com custo de mana igual ou menor que o poder dela. Quanto mais ela ataca, mais cara a criatura que ela revive."
+ },
+ "f1d8e9a6-1903-4be5-8609-1009a463f393": {
+  "n": "Anthem of Champions",
+  "t": "Encantamento",
+  "x": "As criaturas que você controla recebem +1/+1.",
+  "s": "Por só duas manas (uma verde e uma branca), todas as suas criaturas ficam +1/+1 enquanto ele estiver na mesa, inclusive as fichas e as que você baixar depois. Quanto mais criaturas você tiver, melhor."
+ },
+ "3f008b57-6471-4785-9571-3b90193da7e2": {
+  "n": "Ashroot Animist",
+  "t": "Criatura — Lagarto Druida",
+  "x": "Atropelar (Esta criatura pode causar dano de combate excedente ao jogador ou planeswalker que ela está atacando.)\nToda vez que esta criatura atacar, outra criatura alvo que você controla ganha atropelar e recebe +X/+X até o final do turno, sendo X o poder desta criatura.",
+  "s": "Um 4/4 com atropelar que, ao atacar, dá a outra criatura sua atropelar e +4/+4 (o poder dele) até o fim do turno. Faz mais sentido escolher uma criatura que também está atacando."
+ },
+ "bbfd0de0-3558-4833-bae4-8efae44b7fff": {
+  "n": "Dreadwing Scavenger",
+  "t": "Criatura — Pesadelo Ave",
+  "x": "Voar\nToda vez que esta criatura entrar no campo de batalha ou atacar, compre um card e depois descarte um card.\nLimiar — Esta criatura recebe +1/+1 e tem toque mortífero enquanto houver sete ou mais cards em seu cemitério.",
+  "s": "Voa e, ao entrar e toda vez que ataca, troca uma carta da mão por outra: você compra primeiro e depois descarta. Isso também enche o cemitério. Com 7 cartas ou mais lá, ela fica 3/3 e ganha toque mortífero."
+ },
+ "bfd614d5-4c7f-416b-9cb2-bb167c0893a0": {
+  "n": "Elenda, Saint of Dusk",
+  "t": "Criatura Lendária — Vampiro Cavaleiro",
+  "x": "Vínculo com a vida, resistência à magia de mágicas instantâneas\nContanto que seu total de pontos de vida seja maior que seu total de pontos de vida inicial, Elenda recebe +1/+1 e tem ameaçar. Elenda recebe +5/+5 adicionais contanto que seu total de pontos de vida seja pelo menos 10 maior que seu total de pontos de vida inicial.",
+  "s": "Com vínculo com a vida, ela mesma te dá vida quando bate. Se você tem mais vida do que no começo do jogo (20 no jogo normal), ela fica 5/5 e difícil de bloquear. Com 30 de vida ou mais, ganha mais +5/+5. O oponente não pode escolhê-la com mágicas instantâneas, mas ainda pode com feitiços e habilidades."
+ },
+ "b5d64271-4478-4c55-8c71-ba8f02b47fac": {
+  "n": "Fiendish Panda",
+  "t": "Criatura — Urso Demônio",
+  "x": "Toda vez que você ganhar pontos de vida, coloque um marcador +1/+1 nesta criatura.\nQuando esta criatura morrer, devolva do seu cemitério para o campo de batalha outro card de criatura não Urso alvo com valor de mana igual ou inferior ao poder desta criatura.",
+  "s": "Cada vez que você ganha vida, ela cresce +1/+1. Quando morre, ela traz de volta do cemitério uma criatura que não seja Urso, com custo de mana igual ou menor que o poder dela. Combina bem com as cartas que dão vida, como Healer's Hawk e Dazzling Angel."
+ },
+ "1ebf2142-f171-40cd-8143-15f50084b707": {
+  "n": "Koma, World-Eater",
+  "t": "Criatura Lendária — Serpente",
+  "x": "Esta mágica não pode ser anulada.\nAtropelar, salvaguarda {4}\nToda vez que Koma causar dano de combate a um jogador, crie quatro fichas de criatura Serpente azul 3/3 com o nome Koma's Coil.",
+  "s": "O monstro do deck: 8/12 com atropelar por sete manas. A mágica não pode ser anulada, e ela tem Salvaguarda {4}, então o oponente paga {4} a mais para escolhê-la como alvo. Cada vez que machuca um jogador, vêm quatro Serpentes 3/3."
+ },
+ "0156c94b-e64c-49de-a46c-a203c5e05e98": {
+  "n": "Kykar, Zephyr Awakener",
+  "t": "Criatura Lendária — Ave Mago",
+  "x": "Voar\nToda vez que você conjurar uma mágica não de criatura, escolha um —\n• Exile outra criatura alvo que você controla. Devolva aquele card ao campo de batalha sob o controle de seu dono no início da próxima etapa final.\n• Crie uma ficha de criatura Espírito branca 1/1 com voar.",
+  "s": "Um 3/4 que voa. Toda vez que você conjura algo que não é criatura, escolhe: tirar uma criatura sua do jogo e ela volta no fim do turno (refaz o efeito de quando entra, e pode escapar de uma remoção), ou criar um Espírito 1/1 que voa. O efeito vem na hora de conjurar, até no turno do oponente."
+ },
+ "d9f1dc61-831e-4244-a2da-aa9da6fd5b50": {
+  "n": "Niv-Mizzet, Visionary",
+  "t": "Criatura Lendária — Dragão Mago",
+  "x": "Voar\nVocê não tem limite máximo de cards na mão.\nToda vez que uma fonte que você controla causar dano que não seja de combate a um oponente, você compra essa mesma quantidade de cards.",
+  "s": "Um dragão 5/5 que voa e não te deixa descartar por tamanho de mão. Toda vez que uma mágica ou habilidade sua causa dano ao oponente (sem ser dano de combate), você compra tantas cartas quanto o dano causado. Com Boltwave, são 3 cartas, e com Twinflame Tyrant, que dobra o dano, 6."
+ },
+ "a3643f66-dfa2-4275-a093-23e162496354": {
+  "n": "Perforating Artist",
+  "t": "Criatura — Diabo",
+  "x": "Toque mortífero (Qualquer quantidade de dano que esta criatura causar a uma criatura é suficiente para destruí-la.)\nRaide — No início de sua etapa final, se você atacou neste turno, cada oponente perde 3 pontos de vida, a menos que aquele jogador sacrifique uma permanente que não seja um terreno à escolha dele ou descarte um card.",
+  "s": "Uma 3/2 que destrói o que machucar. Se você atacou, no fim do turno o oponente escolhe o que prefere: perder 3 de vida, sacrificar uma permanente que não seja terreno ou descartar uma carta. Funciona bem com Tinybones, que rouba a carta descartada."
+ },
+ "fa7d09aa-2ebc-4571-81da-836cd80cf554": {
+  "n": "Wardens of the Cycle",
+  "t": "Criatura — Elfo Bruxo",
+  "x": "Mórbido — No início de sua etapa final, se uma criatura tiver morrido neste turno, escolha um —\n• Você ganha 2 pontos de vida.\n• Você compra um card e perde 1 ponto de vida.",
+  "s": "Uma 3/4 firme. Se alguma criatura morreu neste turno (sua ou do oponente), no fim do seu turno você escolhe: ganhar 2 de vida, ou comprar uma carta e perder 1 de vida. Só acontece uma vez por turno."
+ },
+ "9dd674a7-becf-4106-b53f-bca88426d92d": {
+  "n": "Zimone, Paradox Sculptor",
+  "t": "Criatura Lendária — Humano Mago",
+  "x": "No início do combate no seu turno, coloque um marcador +1/+1 em cada uma de até duas criaturas alvo que você controla.\n{G}{U}, {T}: Dobre o número de cada tipo de marcador em até duas criaturas e/ou artefatos alvo que você controla.",
+  "s": "Todo turno seu, no início do combate, ela põe um marcador +1/+1 em até duas criaturas suas. Depois, por {G}{U}, ela vira para dobrar todos os marcadores (de qualquer tipo) em até duas criaturas ou artefatos seus. Como usa {T}, a segunda habilidade não funciona no turno em que ela entra. Combina muito com Mossborn Hydra."
  }
 };
